@@ -7,7 +7,7 @@ $title='公告设置';
 include './head.php';
 if($islogin==1){}else exit("<script language='javascript'>window.location.href='./login.php';</script>");
 ?>
-<link href="//cdn.staticfile.org/bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css" rel="stylesheet"/>
+<link href="<?php echo $cdnpublic?>bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css" rel="stylesheet"/>
   <div class="container" style="padding-top:70px;">
     <div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
 <?php
@@ -120,8 +120,8 @@ $list = $DB->getAll("SELECT * FROM pre_anounce ORDER BY sort ASC");
 <?php }?>
  </div>
 </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
-<script src="//cdn.staticfile.org/bootstrap-colorpicker/2.5.3/js/bootstrap-colorpicker.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-colorpicker/2.5.3/js/bootstrap-colorpicker.min.js"></script>
 <script>
 function setStatus(id,status) {
 	$.ajax({

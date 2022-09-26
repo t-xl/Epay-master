@@ -15,7 +15,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
 
 $paytype = [];
 $type_select = '';
-$rs = $DB->getAll("SELECT * FROM pre_type");
+$rs = $DB->getAll("SELECT * FROM pre_type ORDER BY id ASC");
 foreach($rs as $row){
 	$paytype[$row['id']] = $row['showname'];
 	$type_select .= '<option value="'.$row['id'].'">'.$row['showname'].'</option>';
@@ -23,9 +23,9 @@ foreach($rs as $row){
 unset($rs);
 $rolltype = ['顺序轮询','随机轮询'];
 
-$list = $DB->getAll("SELECT * FROM pre_roll");
+$list = $DB->getAll("SELECT * FROM pre_roll ORDER BY id ASC");
 ?>
-<div class="modal" id="modal-store" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="modal-store" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content animated flipInX">
 			<div class="modal-header">
@@ -114,7 +114,7 @@ echo '<tr><td><b>'.$res['id'].'</b></td><td>'.$res['name'].'</td><td>'.$paytype[
 	</div>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function addframe(){
 	$("#modal-store").modal('show');
@@ -129,7 +129,7 @@ function editframe(id){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=getRoll&id='+id,
+		url : 'ajax_pay.php?act=getRoll&id='+id,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -161,7 +161,7 @@ function save(){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=saveRoll',
+		url : 'ajax_pay.php?act=saveRoll',
 		data : $("#form-store").serialize(),
 		dataType : 'json',
 		success : function(data) {
@@ -189,7 +189,7 @@ function delItem(id) {
 	}, function(){
 	  $.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=delRoll&id='+id,
+		url : 'ajax_pay.php?act=delRoll&id='+id,
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){
@@ -210,7 +210,7 @@ function delItem(id) {
 function setStatus(id,status) {
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=setRoll&id='+id+'&status='+status,
+		url : 'ajax_pay.php?act=setRoll&id='+id+'&status='+status,
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){
@@ -230,7 +230,7 @@ function editInfo(id){
 	$("#channel").empty();
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=rollInfo&id='+id,
+		url : 'ajax_pay.php?act=rollInfo&id='+id,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -274,7 +274,7 @@ function saveInfo(id){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=saveRollInfo&id='+id,
+		url : 'ajax_pay.php?act=saveRollInfo&id='+id,
 		data : $("#form-info").serialize(),
 		dataType : 'json',
 		success : function(data) {

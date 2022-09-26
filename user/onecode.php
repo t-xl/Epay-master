@@ -1,28 +1,28 @@
 <?php
 include("../includes/common.php");
 if($islogin2==1){}else exit("<script language='javascript'>window.location.href='./login.php';</script>");
-$title='一码支付';
+$title='聚合收款';
 include './head.php';
 ?>
 <?php
-if(!$conf['onecode'])exit('未开启一码支付');
+if(!$conf['onecode'])exit('未开启聚合收款');
 
 $merchant = authcode($uid, 'ENCODE', SYS_KEY);
 $code_url = $siteurl.'paypage/?merchant='.urlencode($merchant);
-if(isset($_SESSION['onecode_url'])){
+/*if(isset($_SESSION['onecode_url'])){
 	$code_url = $_SESSION['onecode_url'];
 }else{
 	$code_url = getdwz($code_url);
 	if($code_url){
 		$_SESSION['onecode_url'] = $code_url;
 	}
-}
+}*/
 ?>
  <div id="content" class="app-content" role="main">
     <div class="app-content-body ">
 
 <div class="bg-light lter b-b wrapper-md hidden-print">
-  <h1 class="m-n font-thin h3">一码支付</h1>
+  <h1 class="m-n font-thin h3">聚合收款</h1>
 </div>
 <div class="wrapper-md control">
 <?php if(isset($msg)){?>
@@ -35,7 +35,7 @@ if(isset($_SESSION['onecode_url'])){
 			<i class="fa fa-list"></i>&nbsp;产品介绍
 		</div>
 		<div class="panel-body">
-		<p>一码支付是基于一个收款二维码，支持支付宝、微信、QQ等主流支付方式的收款产品。</p>
+		<p>聚合收款是基于一个收款二维码，支持支付宝、微信、QQ等主流支付方式的收款产品。</p>
 <p>商家只需要一个固定的二维码，就可以完成支付宝、微信、QQ等主流支付方式的收款，方便快捷。</p>
 		</div>
 	</div>
@@ -43,7 +43,7 @@ if(isset($_SESSION['onecode_url'])){
 	<div class="col-md-6">
 	<div class="panel panel-default">
 		<div class="panel-heading font-bold">
-			<i class="fa fa-qrcode"></i>&nbsp;一码支付配置
+			<i class="fa fa-qrcode"></i>&nbsp;聚合收款配置
 		</div>
 		<div class="panel-body">
 			<form class="form-horizontal devform">
@@ -62,7 +62,7 @@ if(isset($_SESSION['onecode_url'])){
 	</div>
 	<div class="panel panel-default">
 		<div class="panel-heading font-bold">
-			<i class="fa fa-qrcode"></i>&nbsp;你的一码支付收款链接
+			<i class="fa fa-qrcode"></i>&nbsp;你的聚合收款链接
 		</div>
 		<div class="panel-body">
 		<p>你可以将收款链接发到QQ、微信等聊天工具，别人点击后可以直接输入金额付款。</p>
@@ -76,7 +76,7 @@ if(isset($_SESSION['onecode_url'])){
 	<div class="col-md-6">
 	<div class="panel panel-default">
 		<div class="panel-heading font-bold">
-			<i class="fa fa-qrcode"></i>&nbsp;你的一码支付收款码
+			<i class="fa fa-qrcode"></i>&nbsp;你的聚合收款码
 		</div>
 		<div class="panel-body text-center">
 			<input type="hidden" id="recName" value="<?php echo $userrow['codename']?$userrow['codename']:$userrow['username']?>">
@@ -117,8 +117,8 @@ if(isset($_SESSION['onecode_url'])){
   </div>
 
 <?php include 'foot.php';?>
-<script src="../assets/layer/layer.js"></script>
-<script src="//cdn.staticfile.org/clipboard.js/1.7.1/clipboard.min.js"></script>
-<script src="//cdn.staticfile.org/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
-<script src="//cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>clipboard.js/1.7.1/clipboard.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="./assets/js/onecode.js"></script>

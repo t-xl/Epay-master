@@ -1,7 +1,7 @@
 <?php
 @header('Content-Type: text/html; charset=UTF-8');
 if($userrow['status']==0){
-	sysmsg('你的商户由于违反相关法律法规与《<a href="/?mod=agreement">"'.$conf['sitename'].'用户协议</a>》，已被禁用！');
+	sysmsg('你的商户由于违反相关法律法规与《<a href="/?mod=agreement">'.$conf['sitename'].'用户协议</a>》，已被禁用！');
 }
 switch($conf['user_style']){
 	case 1: $style=['bg-black','bg-black','bg-white']; break;
@@ -21,13 +21,13 @@ switch($conf['user_style']){
   <title><?php echo $title?> | <?php echo $conf['sitename']?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
-  <link rel="stylesheet" href="//cdn.staticfile.org/animate.css/3.5.2/animate.min.css" type="text/css" />
-  <link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
-  <link rel="stylesheet" href="//cdn.staticfile.org/simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
+  <link rel="stylesheet" href="<?php echo $cdnpublic?>twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href="<?php echo $cdnpublic?>animate.css/3.5.2/animate.min.css" type="text/css" />
+  <link rel="stylesheet" href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
+  <link rel="stylesheet" href="<?php echo $cdnpublic?>simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
   <link rel="stylesheet" href="./assets/css/font.css" type="text/css" />
   <link rel="stylesheet" href="./assets/css/app.css" type="text/css" />
-
+  <link rel="stylesheet" href="../assets/css/bootstrap-table.css?v=1"/>
 </head>
 <body>
 <div class="app app-header-fixed  ">
@@ -79,7 +79,7 @@ switch($conf['user_style']){
                 </a>
               </li>
               <li>
-                <a href="userinfo.php?mod=info">
+                <a href="editinfo.php">
                   <span>修改资料</span>
                 </a>
               </li>
@@ -199,6 +199,14 @@ switch($conf['user_style']){
                 </a>
               </li>
 			  <?php }?>
+        <?php if($conf['pay_domain_open']==1){?>
+			  <li class="<?php echo checkIfActive('domain')?>">
+                <a href="domain.php">
+                  <i class="glyphicon glyphicon-globe"></i>
+                  <span>授权域名</span>
+                </a>
+              </li>
+			  <?php }?>
               <li class="line dk hidden-folded"></li>
 
               <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">          
@@ -208,7 +216,7 @@ switch($conf['user_style']){
               <li class="<?php echo checkIfActive('onecode')?>">
                 <a href="onecode.php">
                   <i class="fa fa-qrcode fa-fw"></i>
-                  <span>一码支付</span>
+                  <span>聚合收款</span>
                 </a>
               </li>
 			  <?php }?>

@@ -197,7 +197,7 @@ if(!defined('IN_CRONLITE'))exit();
                       <i class="ni ni-planet"></i>
                     </div>
                     <h4 class="h3 text-warning text-uppercase">云结算</h4>
-                    <p class="description mt-3">Opao易支付通过简单的页面配置，可以替代复杂繁琐的人工资金结算业务，提高业务实时性，降低错误。</p>
+                    <p class="description mt-3"><?php echo $conf['sitename']?>通过简单的页面配置，可以替代复杂繁琐的人工资金结算业务，提高业务实时性，降低错误。</p>
                     <div>
                       <span class="badge badge-pill badge-warning">支付宝</span>
                       <span class="badge badge-pill badge-warning">微信支付</span>
@@ -311,7 +311,7 @@ if(!defined('IN_CRONLITE'))exit();
           </div>
         </div>
         <div class="blur--hover">
-          <a href="/user/agreement.php">
+          <a href="#">
             <div class="icons-container blur-item mt-5">
               <!-- Center -->
               <i class="icon ni ni-diamond"></i>
@@ -344,7 +344,7 @@ if(!defined('IN_CRONLITE'))exit();
       <div class="row align-items-center justify-content-xl-between">
         <div class="col-xl-6">
           <div class="copyright text-center text-xl-left text-muted">
-            <?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved.
+            <?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;<?php echo date("Y")?>&nbsp;All Rights Reserved.
           </div>
         </div>
         <div class="col-xl-6">
@@ -357,10 +357,10 @@ if(!defined('IN_CRONLITE'))exit();
       </div>
     </div>
   </footer>
-  <script src="<?php echo STATIC_ROOT?>js/jquery.min.js"></script>
-  <script src="<?php echo STATIC_ROOT?>js/bootstrap.bundle.min.js"></script>
-  <script src="<?php echo STATIC_ROOT?>js/js.cookie.js"></script>
-  <script src="<?php echo STATIC_ROOT?>js/jquery.scrollbar.min.js"></script>
+  <script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
+  <script src="<?php echo $cdnpublic?>twitter-bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <script src="<?php echo $cdnpublic?>js-cookie/2.2.1/js.cookie.min.js"></script>
+  <script src="<?php echo $cdnpublic?>jquery.scrollbar/0.2.11/jquery.scrollbar.min.js"></script>
   <script src="<?php echo STATIC_ROOT?>js/jquery-scrollLock.min.js"></script>
   <script src="<?php echo STATIC_ROOT?>js/jquery.lavalamp.min.js"></script>
   <script src="<?php echo STATIC_ROOT?>js/app.min.js"></script>

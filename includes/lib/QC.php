@@ -96,7 +96,7 @@ class QC{
 
         $user = json_decode($response);
         if(isset($user->error)){
-			sysmsg('<h3>error:</h3>'.$msg->error.'<h3>msg  :</h3>'.$msg->error_description);
+			sysmsg('<h3>error:</h3>'.$user->error.'<h3>msg  :</h3>'.$user->error_description);
         }
 
         //------记录openid

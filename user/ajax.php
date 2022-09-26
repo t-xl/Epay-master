@@ -2,7 +2,7 @@
 include("../includes/common.php");
 $act=isset($_GET['act'])?daddslashes($_GET['act']):null;
 
-if(strpos($_SERVER['HTTP_REFERER'],$_SERVER['HTTP_HOST'])===false)exit('{"code":403}');
+if(!checkRefererHost())exit('{"code":403}');
 
 @header('Content-Type: application/json; charset=UTF-8');
 
@@ -31,7 +31,8 @@ case 'login':
 	if(!$_POST['csrf_token'] || $_POST['csrf_token']!=$_SESSION['csrf_token'])exit('{"code":-1,"msg":"CSRF TOKEN ERROR"}');
 
 	if($conf['captcha_open_login']==1){
-		$GtSdk = new \lib\GeetestLib($conf['CAPTCHA_ID'], $conf['PRIVATE_KEY']);
+		if(!isset($_SESSION['gtserver']))exit('{"code":-1,"msg":"验证加载失败"}');
+		$GtSdk = new \lib\GeetestLib($conf['captcha_id'], $conf['captcha_key']);
 		$data = array(
 			'user_id' => 'public', # 网站用户id
 			'client_type' => "web", # web:电脑上的浏览器；h5:手机上的浏览器，包括移动应用内完全内置的web_view；native：通过原生SDK植入APP应用的方式
@@ -58,6 +59,7 @@ case 'login':
 		$userrow=$DB->getRow("SELECT * FROM pre_user WHERE email='{$user}' OR phone='{$user}' limit 1");
 		$pass=getMd5Pwd($pass, $userrow['uid']);
 	}else{
+		if($conf['close_keylogin']==1)exit('{"code":-1,"msg":"未开启密钥登录，请使用账号密码登录！"}');
 		$userrow=$DB->getRow("SELECT * FROM pre_user WHERE uid='{$user}' limit 1");
 		if($userrow && $userrow['keylogin']==0){
 			exit('{"code":-1,"msg":"该商户未开启密钥登录，请使用账号密码登录！"}');
@@ -73,7 +75,7 @@ case 'login':
 			$DB->exec("update `pre_user` set `qq_uid` ='$qq_uid' where `uid`='$uid'");
 			unset($_SESSION['Oauth_qq_uid']);
 		}
-		$city=get_ip_city($clientip);
+		$city='';
 		$DB->exec("insert into `pre_log` (`uid`,`type`,`date`,`ip`,`city`) values ('".$uid."','普通登录','".$date."','".$clientip."','".$city."')");
 		$session=md5($uid.$userrow['key'].$password_hash);
 		$expiretime=time()+604800;
@@ -93,7 +95,7 @@ case 'login':
 	exit(json_encode($result));
 break;
 case 'captcha':
-	$GtSdk = new \lib\GeetestLib($conf['CAPTCHA_ID'], $conf['PRIVATE_KEY']);
+	$GtSdk = new \lib\GeetestLib($conf['captcha_id'], $conf['captcha_key']);
 	$data = array(
 		'user_id' => isset($uid)?$uid:'public', # 网站用户id
 		'client_type' => "web", # web:电脑上的浏览器；h5:手机上的浏览器，包括移动应用内完全内置的web_view；native：通过原生SDK植入APP应用的方式
@@ -101,7 +103,6 @@ case 'captcha':
 	);
 	$status = $GtSdk->pre_process($data, 1);
 	$_SESSION['gtserver'] = $status;
-	$_SESSION['user_id'] = isset($uid)?$uid:'public';
 	echo $GtSdk->get_response_str();
 break;
 case 'sendcode':
@@ -111,7 +112,9 @@ case 'sendcode':
 		exit('{"code":-1,"msg":"请勿频繁发送验证码"}');
 	}
 
-	$GtSdk = new \lib\GeetestLib($conf['CAPTCHA_ID'], $conf['PRIVATE_KEY']);
+	if(!isset($_SESSION['gtserver']))exit('{"code":-1,"msg":"验证加载失败"}');
+
+	$GtSdk = new \lib\GeetestLib($conf['captcha_id'], $conf['captcha_key']);
 
 	$data = array(
 		'user_id' => 'public', # 网站用户id
@@ -240,15 +243,17 @@ case 'reg':
 		}
 	}
 	if($conf['verifytype']==1){
-		$row=$DB->getRow("select * from pre_regcode where type=1 and code='$code' and `to`='$phone' order by id desc limit 1");
+		$row=$DB->getRow("select * from pre_regcode where type=1 and `to`='$phone' order by id desc limit 1");
 	}else{
-		$row=$DB->getRow("select * from pre_regcode where type=0 and code='$code' and `to`='$email' order by id desc limit 1");
+		$row=$DB->getRow("select * from pre_regcode where type=0 and `to`='$email' order by id desc limit 1");
 	}
-	if(!$row){
-		exit('{"code":-1,"msg":"验证码不正确！"}');
-	}
-	if($row['time']<time()-3600 || $row['status']>0){
+    if (!$row) {
+		exit('{"code":-1,"msg":"请重新获取验证码！"}');
+    }elseif($row['time']<time()-3600 || $row['status']>0 || $row['errcount']>=5){
 		exit('{"code":-1,"msg":"验证码已失效，请重新获取"}');
+	}elseif($row['code']!=$code){
+		$DB->exec("update `pre_regcode` set `errcount`=`errcount`+1 where `id`='{$row['id']}'");
+		exit('{"code":-1,"msg":"验证码不正确！"}');
 	}
 	if($conf['reg_pay']==1){
 		$gid = $DB->getColumn("SELECT gid FROM pre_user WHERE uid='{$conf['reg_pay_uid']}' limit 1");
@@ -270,7 +275,8 @@ case 'reg':
 		}
 	}else{
 		$key = random(32);
-		$sds=$DB->exec("INSERT INTO `pre_user` (`key`, `money`, `email`, `phone`, `addtime`, `pay`, `settle`, `keylogin`, `apply`, `status`) VALUES (:key, '0.00', :email, :phone, NOW(), 1, 1, 0, 0, 1)", [':key'=>$key, ':email'=>$email, ':phone'=>$phone]);
+		$paystatus = $conf['user_review']==1?2:1;
+		$sds=$DB->exec("INSERT INTO `pre_user` (`key`, `money`, `email`, `phone`, `addtime`, `pay`, `settle`, `keylogin`, `apply`, `status`) VALUES (:key, '0.00', :email, :phone, NOW(), :paystatus, 1, 0, 0, 1)", [':key'=>$key, ':email'=>$email, ':phone'=>$phone, ':paystatus'=>$paystatus]);
 		$uid=$DB->lastInsertId();
 		if($sds){
 			$pwd = getMd5Pwd($pwd, $uid);
@@ -297,7 +303,9 @@ case 'sendcode2':
 		exit('{"code":-1,"msg":"请勿频繁发送验证码"}');
 	}
 
-	$GtSdk = new \lib\GeetestLib($conf['CAPTCHA_ID'], $conf['PRIVATE_KEY']);
+	if(!isset($_SESSION['gtserver']))exit('{"code":-1,"msg":"验证加载失败"}');
+
+	$GtSdk = new \lib\GeetestLib($conf['captcha_id'], $conf['captcha_key']);
 
 	$data = array(
 		'user_id' => 'public', # 网站用户id
@@ -422,15 +430,17 @@ case 'findpwd':
 		}
 	}
 	if($verifytype=='phone'){
-		$row=$DB->getRow("select * from pre_regcode where type=5 and code='$code' and `to`='$account' order by id desc limit 1");
+		$row=$DB->getRow("select * from pre_regcode where type=5 and `to`='$account' order by id desc limit 1");
 	}else{
-		$row=$DB->getRow("select * from pre_regcode where type=4 and code='$code' and `to`='$account' order by id desc limit 1");
+		$row=$DB->getRow("select * from pre_regcode where type=4 and `to`='$account' order by id desc limit 1");
 	}
-	if(!$row){
-		exit('{"code":-1,"msg":"验证码不正确！"}');
-	}
-	if($row['time']<time()-3600 || $row['status']>0){
+	if (!$row) {
+		exit('{"code":-1,"msg":"请重新获取验证码！"}');
+    }elseif($row['time']<time()-3600 || $row['status']>0 || $row['errcount']>=5){
 		exit('{"code":-1,"msg":"验证码已失效，请重新获取"}');
+	}elseif($row['code']!=$code){
+		$DB->exec("update `pre_regcode` set `errcount`=`errcount`+1 where `id`='{$row['id']}'");
+		exit('{"code":-1,"msg":"验证码不正确！"}');
 	}
 
 	$pwd = getMd5Pwd($pwd, $userrow['uid']);

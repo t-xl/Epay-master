@@ -1,4 +1,5 @@
 <?php
+$is_defend = true;
 include("./inc.php");
 @header('Content-Type: text/html; charset=UTF-8');
 $trade_no=daddslashes($_GET['trade_no']);
@@ -9,40 +10,59 @@ if(!isset($_SESSION['paypage_trade_no']) || $_SESSION['paypage_trade_no']!=$trad
 $userrow=$DB->getRow("select codename,username from pre_user where uid='{$row['uid']}' limit 1");
 $codename = !empty($userrow['codename'])?$userrow['codename']:$userrow['username'];
 ?>
-<!DOCTYPE html>
-<html>
+<html class="weui-msg">
 <head>
-    <title>支付成功页面</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta name="format-detection" content="telephone=no">
-    <meta http-equiv="pragma" content="no-cache">
-    <meta http-equiv="cache-control" content="no-cache">
-    <meta http-equiv="expires" content="0">
-    <link href="//cdn.staticfile.org/ionic/1.3.2/css/ionic.min.css" rel="stylesheet" />
-	<style>
-	body,input,button,h1{font-size:16px;font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, 'Hiragino Sans GB', 'Microsoft Yahei', 微软雅黑, STHeiti, 华文细黑, sans-serif; padding:0;margin:0}
-	</style>
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>支付成功页面</title>
+    <link href="//res.wx.qq.com/open/libs/weui/2.4.4/weui.min.css" rel="stylesheet">
+    <style>.page{position:absolute;top:0;right:0;bottom:0;left:0;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box}</style>
 </head>
 <body>
-<div class="bar bar-header bar-light" align-title="center">
-	<h1 class="title">支付成功页面</h1>
+<div class="container">
+<div class="page">
+<div class="weui-msg">
+    <div class="weui-msg__icon-area">
+        <i class="weui-icon-success weui-icon_msg"></i>
+    </div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title">支付成功</h2>
+		<h2 class="weui-msg__title"><span style="font-size:38px;font-weight:700;color:#f40;">￥<?php echo $row['money']?></span></h2>
+		<div class="weui-msg__custom-area">
+			<div class="weui-cells">
+			  <div class="weui-cell weui-cell_example">
+				<span class="weui-cell__bd">收款方</span>
+				<span class="weui-cell__ft"><strong><?php echo $codename?></strong></span>
+			  </div>
+			  <div class="weui-cell weui-cell_example">
+				<span class="weui-cell__bd">完成时间</span>
+				<span class="weui-cell__ft"><?php echo $row['endtime']?></span>
+			  </div>
+			  <div class="weui-cell weui-cell_example">
+				<span class="weui-cell__bd">订单号</span>
+				<span class="weui-cell__ft"><?php echo $trade_no?></span>
+			  </div>
+			</div>
+		</div>
+    </div>
+    <div class="weui-msg__opr-area">
+        <p class="weui-btn-area">
+            <a href="javascript:;" class="weui-btn weui-btn_default" id="Close">关闭</a>
+        </p>
+    </div>
+    <div class="weui-msg__extra-area">
+        <div class="weui-footer"><p class="weui-footer__links"></p><p class="weui-footer__text">Copyright © <?php echo date("Y")?> <?php echo $conf['sitename']?></p></div>
+    </div>
 </div>
-<div class="has-header" style="padding: 5px;position: absolute;width: 100%;">
-<div class="text-center" style="color: #22ac38;">
-<i class="icon ion-checkmark-circled" style="font-size: 80px;"></i><br>
-</div>
-<div class="text-center" style="margin-top: 30px;">
-<p><span style="font-size: 18px;color: #666;"><?php echo $codename?></span></p>
-<p><span style="font-size: 18px;color: #666;">支付金额：<span style="font-size:24px;font-weight:700;color:#f40;">￥<?php echo $row['money']?></span></span></p>
-<p><span style="font-size: 14px;color: #666;">支付时间：<?php echo $row['endtime']?></span></p>
-<p><span style="font-size: 14px;color: #666;">订单号：<?php echo $trade_no?></span></p>
 </div>
 </div>
+<script src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
+<script src="//open.mobile.qq.com/sdk/qqapi.js?_bid=152"></script>
+<script src="js/close.js"></script>
 <script>
-document.querySelector('body').addEventListener('touchmove', function (event) {
+document.body.addEventListener('touchmove', function (event) {
 	event.preventDefault();
-});
+},{ passive: false });
 </script>
 </body>
 </html>

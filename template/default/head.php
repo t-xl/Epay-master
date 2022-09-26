@@ -11,14 +11,14 @@ if(!defined('IN_CRONLITE'))exit();
 <meta name="viewport"content="user-scalable=no, width=device-width">
 <meta name="viewport"content="width=device-width, initial-scale=1"/>
 <meta name="renderer"content="webkit">
-<link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" type="text/css" />
 <link rel="stylesheet"href="<?php echo STATIC_ROOT?>css/common.css">
 <link rel="stylesheet"href="<?php echo STATIC_ROOT?>css/index-top.css">
 <!--[if IE 9 ]><style type="text/css">#ie9{ display:block; }</style><![endif]-->
-<script src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js"></script>
-<script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<script src="//cdn.staticfile.org/jquery-ujs/1.2.2/rails.min.js"async="true"></script>
+<script src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery-ujs/1.2.2/rails.min.js"async="true"></script>
 <link rel="stylesheet"type="text/css"href="<?php echo STATIC_ROOT?>css/index.css"/>
 </head>
 <body>
@@ -41,7 +41,7 @@ if(!defined('IN_CRONLITE'))exit();
 <span class="icon-bar"></span>
 <span class="icon-bar"></span>
 </button>
-<a href="/"><span class="logo" style="background:url(assets/img/logo.png) no-repeat;height: 45px"></span></a>
+<a href="/"><span class="logo" style="background:url(assets/img/logo.png) no-repeat;background-size: auto 45px"></span></a>
 </div>
 <div class="navbar-collapse navbar-top-collapse collapse"style="height: 1px;">
 <ul class="nav navbar-nav navbar-right c_navbar">

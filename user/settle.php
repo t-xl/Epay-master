@@ -30,13 +30,13 @@ function display_status($status, $id){
 		return '<font color=blue>待结算</font>';
 }
 
-$numrows=$DB->query("SELECT * from pre_settle WHERE uid={$uid}")->rowCount();
+$numrows=$DB->getColumn("SELECT count(*) from pre_settle WHERE uid={$uid}");
 $pagesize=20;
 $pages=ceil($numrows/$pagesize);
 $page=isset($_GET['page'])?intval($_GET['page']):1;
 $offset=$pagesize*($page - 1);
 
-$list=$DB->query("SELECT * FROM pre_settle WHERE uid={$uid} order by id desc limit $offset,$pagesize")->fetchAll();
+$list=$DB->getAll("SELECT * FROM pre_settle WHERE uid={$uid} order by id desc limit $offset,$pagesize");
 
 ?>
  <div id="content" class="app-content" role="main">
@@ -109,7 +109,7 @@ echo'</ul>';
 
 <?php include 'foot.php';?>
 
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function showResult(id) {
 	var ii = layer.load(2, {shade:[0.1,'#fff']});

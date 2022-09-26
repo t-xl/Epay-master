@@ -2,17 +2,22 @@
 $nosession = true;
 require './includes/common.php';
 
-$type=isset($_GET['type'])?daddslashes($_GET['type']):exit('No type!');
 $trade_no=isset($_GET['trade_no'])?daddslashes($_GET['trade_no']):exit('No trade_no!');
 
 @header('Content-Type: text/html; charset=UTF-8');
 
-$row=$DB->getRow("SELECT * FROM ".DBQZ."_order WHERE trade_no='{$trade_no}' limit 1");
+$row=$DB->getRow("SELECT * FROM pre_order WHERE trade_no='{$trade_no}' limit 1");
 if($row['status']>=1){
-	$url=creat_callback($row);
-	exit('{"code":1,"msg":"付款成功","backurl":"'.$url['return'].'"}');
+	// 支付完成5分钟后禁止跳转回网站
+	if(!empty($row['endtime']) && time() - strtotime($row['endtime']) > 300){
+		$jumpurl = '/payok.html';
+	}else{
+		$url=creat_callback($row);
+		$jumpurl = $url['return'];
+	}
+	echo json_encode(['code'=>1, 'msg'=>'付款成功', 'backurl'=>$jumpurl]);
 }else{
-	exit('{"code":-1,"msg":"未付款"}');
+	echo json_encode(['code'=>-1, 'msg'=>'未付款']);
 }
 
 ?>

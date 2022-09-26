@@ -42,7 +42,7 @@ class JsApiPay
 		//通过code获得openid
 		if (!isset($_GET['code'])){
 			//触发微信返回code码
-			$baseUrl = urlencode('http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+			$baseUrl = urlencode((is_https() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
 			$url = $this->__CreateOauthUrlForCode($baseUrl);
 			Header("Location: $url");
 			exit();
@@ -60,7 +60,7 @@ class JsApiPay
 	 * @param array $UnifiedOrderResult 统一支付接口返回的数据
 	 * @throws WxPayException
 	 * 
-	 * @return json数据，可直接填入js函数作为参数
+	 * @return string json数据，可直接填入js函数作为参数
 	 */
 	public function GetJsApiParameters($UnifiedOrderResult)
 	{
@@ -94,11 +94,16 @@ class JsApiPay
 		$url = $this->__CreateOauthUrlForOpenid($code);
 		//初始化curl
 		$ch = curl_init();
+		$curlVersion = curl_version();
+		$ua = "WXPaySDK/3.0.9 (".PHP_OS.") PHP/".PHP_VERSION." CURL/".$curlVersion['version']." "
+		.WxPayConfig::MCHID;
+
 		//设置超时
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->curl_timeout);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,FALSE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,FALSE);
+		curl_setopt($ch, CURLOPT_USERAGENT, $ua);
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		if(WxPayConfig::CURL_PROXY_HOST != "0.0.0.0" 
@@ -139,38 +144,6 @@ class JsApiPay
 	
 	/**
 	 * 
-	 * 获取地址js参数
-	 * 
-	 * @return 获取共享收货地址js函数需要的参数，json格式可以直接做参数使用
-	 */
-	public function GetEditAddressParameters()
-	{	
-		$getData = $this->data;
-		$data = array();
-		$data["appid"] = WxPayConfig::APPID;
-		$data["url"] = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-		$time = time();
-		$data["timestamp"] = "$time";
-		$data["noncestr"] = "1234568";
-		$data["accesstoken"] = $getData["access_token"];
-		ksort($data);
-		$params = $this->ToUrlParams($data);
-		$addrSign = sha1($params);
-		
-		$afterData = array(
-			"addrSign" => $addrSign,
-			"signType" => "sha1",
-			"scope" => "jsapi_address",
-			"appId" => WxPayConfig::APPID,
-			"timeStamp" => $data["timestamp"],
-			"nonceStr" => $data["noncestr"]
-		);
-		$parameters = json_encode($afterData);
-		return $parameters;
-	}
-	
-	/**
-	 * 
 	 * 构造获取code的url连接
 	 * @param string $redirectUrl 微信服务器回跳的url，需要url编码
 	 * 
@@ -179,7 +152,7 @@ class JsApiPay
 	private function __CreateOauthUrlForCode($redirectUrl)
 	{
 		$urlObj["appid"] = WxPayConfig::APPID;
-		$urlObj["redirect_uri"] = "$redirectUrl";
+		$urlObj["redirect_uri"] = $redirectUrl;
 		$urlObj["response_type"] = "code";
 		$urlObj["scope"] = "snsapi_base";
 		$urlObj["state"] = "STATE"."#wechat_redirect";

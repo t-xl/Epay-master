@@ -13,13 +13,24 @@ function getCookie(name)
 	else
 		return null;
 }
+function delCookie(name)
+{
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval=getCookie(name);
+    if(cval!=null){
+      document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+}
 function getqrpic(force){
 	force = force || false;
 	cleartime();
 	var qrsig = getCookie('qrsig');
 	var qrimg = getCookie('qrimg');
-	if(qrsig!=null && qrimg!=null && force==false){
+	var qrurl = getCookie('qrurl');
+	if(qrsig!=null && qrimg!=null && qrurl!=null && force==false){
 		$('#qrimg').attr('qrsig',qrsig);
+		$('#qrimg').attr('qrurl',qrurl);
 		$('#qrimg').html('<img id="qrcodeimg" onclick="getqrpic(true)" src="data:image/png;base64,'+qrimg+'" title="点击刷新">');
 		if( /Android|SymbianOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|Midp/i.test(navigator.userAgent) && navigator.userAgent.indexOf("QQ/") == -1) {
 			$('#mobile').show();
@@ -32,7 +43,9 @@ function getqrpic(force){
 			if(d.saveOK ==0){
 				setCookie('qrsig',d.qrsig);
 				setCookie('qrimg',d.data);
+				setCookie('qrurl',d.url);
 				$('#qrimg').attr('qrsig',d.qrsig);
+				$('#qrimg').attr('qrurl',d.url);
 				$('#qrimg').html('<img id="qrcodeimg" onclick="getqrpic(true)" src="data:image/png;base64,'+d.data+'" title="点击刷新">');
 				if( /Android|SymbianOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|Midp/i.test(navigator.userAgent) && navigator.userAgent.indexOf("QQ/") == -1) {
 					$('#mobile').show();
@@ -56,6 +69,7 @@ function qrlogin(){
 			$('#qrimg').hide();
 			$('#submit').hide();
 			$('#login').attr("data-lock", "true");
+			cleartime();
 			$.get("connect.php?act=qrlogin&r="+Math.random(1), function(arr) {
 				if(arr.code==0) {
 					layer.msg(arr.msg, {icon: 16,time: 10000,shade:[0.3, "#000"]});
@@ -64,7 +78,6 @@ function qrlogin(){
 					layer.alert(arr.msg);
 				}
 			}, 'json');
-			cleartime();
 		}else if(d.saveOK ==1){
 			getqrpic(true);
 			$('#loginmsg').html('请重新扫描二维码');
@@ -95,6 +108,9 @@ function loginload(){
 function cleartime(){
 	clearInterval(interval1);
 	clearInterval(interval2);
+	delCookie('qrsig');
+	delCookie('qrimg');
+	delCookie('qrurl');
 }
 function mloginurl(){
 	var imagew = $('#qrcodeimg').attr('src');
@@ -109,6 +125,44 @@ function mloginurl(){
 		}
 		$('#mlogin').html("跳转QQ快捷登录");
 	}, 'json');
+}
+function mloginurlnew(){
+	var qrurl = $('#qrimg').attr('qrurl');
+	$('#loginmsg').html('跳转到QQ登录后请返回此页面');
+	var ua = window.navigator.userAgent.toLowerCase();
+	var is_ios = ua.indexOf('iphone')>-1 || ua.indexOf('ipad')>-1;
+	var schemacallback = '';
+	if(is_ios){
+		schemacallback = 'weixin://';
+	}else if(ua.indexOf('ucbrowser')>-1){
+		schemacallback = 'ucweb://';
+	}else if(ua.indexOf('meizu')>-1){
+		schemacallback = 'mzbrowser://';
+	}else if(ua.indexOf('liebaofast')>-1){
+		schemacallback = 'lb://';
+	}else if(ua.indexOf('baidubrowser')>-1){
+		schemacallback = 'bdbrowser://';
+	}else if(ua.indexOf('baiduboxapp')>-1){
+		schemacallback = 'bdapp://';
+	}else if(ua.indexOf('mqqbrowser')>-1){
+		schemacallback = 'mqqbrowser://';
+	}else if(ua.indexOf('qihoobrowser')>-1){
+		schemacallback = 'qihoobrowser://';
+	}else if(ua.indexOf('chrome')>-1){
+		schemacallback = 'googlechrome://';
+	}else if(ua.indexOf('sogoumobilebrowser')>-1){
+		schemacallback = 'SogouMSE://';
+	}else if(ua.indexOf('xiaomi')>-1){
+		schemacallback = 'miuibrowser://';
+	}else{
+		schemacallback = 'googlechrome://';
+	}
+	if(is_ios){
+		alert('跳转到QQ登录后请手动返回当前浏览器');
+		window.location.href='wtloginmqq3://ptlogin/qlogin?qrcode='+encodeURIComponent(qrurl)+'&schemacallback='+encodeURIComponent(schemacallback);
+	}else{
+		window.location.href='wtloginmqq://ptlogin/qlogin?qrcode='+encodeURIComponent(qrurl)+'&schemacallback='+encodeURIComponent(schemacallback);
+	}
 }
 $(document).ready(function(){
 	getqrpic();

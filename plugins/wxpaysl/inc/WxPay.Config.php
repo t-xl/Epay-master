@@ -8,6 +8,14 @@ define("WX_API_KEY", $channel['appkey']);
 define("WX_API_APPSECRET", $channel['appsecret']);
 define("WX_API_SUB_MCHID", $channel['appurl']);
 
+if(file_exists(PAY_ROOT.'cert/'.$channel['appmchid'].'/apiclient_cert.pem') && file_exists(PAY_ROOT.'cert/'.$channel['appmchid'].'/apiclient_key.pem')){
+	define("WX_SSLCERT_PATH", PAY_ROOT.'cert/'.$channel['appmchid'].'/apiclient_cert.pem');
+	define("WX_SSLKEY_PATH", PAY_ROOT.'cert/'.$channel['appmchid'].'/apiclient_key.pem');
+}else{
+	define("WX_SSLCERT_PATH", PAY_ROOT.'cert/apiclient_cert.pem');
+	define("WX_SSLKEY_PATH", PAY_ROOT.'cert/apiclient_key.pem');
+}
+
 class WxPayConfig
 {
 	//=======【基本信息设置】=====================================
@@ -33,7 +41,7 @@ class WxPayConfig
 	const APPSECRET = WX_API_APPSECRET;
 
 	
-	const SUB_APPID = WX_API_APPID;
+	const SUB_APPID = "";
 	const SUB_MCHID = WX_API_SUB_MCHID;
 
 	//=======【证书路径设置】=====================================
@@ -43,8 +51,8 @@ class WxPayConfig
 	 * API证书下载地址：https://pay.weixin.qq.com/index.php/account/api_cert，下载之前需要安装商户操作证书）
 	 * @var path
 	 */
-	const SSLCERT_PATH = PAY_ROOT.'cert/apiclient_cert.pem';
-	const SSLKEY_PATH = PAY_ROOT.'cert/apiclient_key.pem';
+	const SSLCERT_PATH = WX_SSLCERT_PATH;
+	const SSLKEY_PATH = WX_SSLKEY_PATH;
 	
 	//=======【curl代理设置】===================================
 	/**

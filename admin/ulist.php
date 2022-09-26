@@ -17,16 +17,6 @@ unset($rs);
 <style>
 #orderItem .orderTitle{word-break:keep-all;}
 #orderItem .orderContent{word-break:break-all;}
-.form-inline .form-control {
-    display: inline-block;
-    width: auto;
-    vertical-align: middle;
-}
-.form-inline .form-group {
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
-}
 </style>
   <div class="container" style="padding-top:70px;">
     <div class="col-md-12 center-block" style="float: none;">
@@ -64,7 +54,8 @@ unset($rs);
 		</div>
 	</div>
 </div>
-<form onsubmit="return searchUser()" method="GET" class="form-inline">
+<form onsubmit="return searchSubmit()" method="GET" class="form-inline" id="searchToolbar">
+<input type="hidden" class="form-control" name="gid">
   <div class="form-group">
     <label>搜索</label>
 	<select name="column" class="form-control"><option value="uid">商户号</option><option value="key">密钥</option><option value="account">结算账号</option><option value="username">结算姓名</option><option value="url">域名</option><option value="qq">QQ</option><option value="phone">手机号码</option><option value="email">邮箱</option></select>
@@ -72,53 +63,117 @@ unset($rs);
   <div class="form-group">
     <input type="text" class="form-control" name="value" placeholder="搜索内容">
   </div>
+  <div class="form-group">
+	<select name="dstatus" class="form-control"><option value="0">全部用户</option><option value="pay_2">待审核用户</option><option value="status_1">用户状态正常</option><option value="status_0">用户状态封禁</option><option value="pay_1">支付状态正常</option><option value="pay_0">支付状态关闭</option><option value="settle_1">结算状态正常</option><option value="settle_0">结算状态关闭</option></select>
+  </div>
   <button type="submit" class="btn btn-primary">搜索</button>&nbsp;<a href="./uset.php?my=add" class="btn btn-success">添加商户</a>
-  <a href="javascript:listTable('start')" class="btn btn-default" title="刷新订单列表"><i class="fa fa-refresh"></i></a>
+  <a href="javascript:searchClear()" class="btn btn-default" title="刷新用户列表"><i class="fa fa-refresh"></i></a>
 </form>
 
-<div id="listTable"></div>
+      <table id="listTable">
+	  </table>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
-<script src="//cdn.staticfile.org/clipboard.js/1.7.1/clipboard.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>clipboard.js/1.7.1/clipboard.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-table/1.20.2/bootstrap-table.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-table/1.20.2/extensions/page-jump-to/bootstrap-table-page-jump-to.min.js"></script>
+<script src="../assets/js/custom.js"></script>
 <script>
-function listTable(query){
-	var url = window.document.location.href.toString();
-	var queryString = url.split("?")[1];
-	query = query || queryString;
-	if(query == 'start' || query == undefined){
-		query = '';
-		history.replaceState({}, null, './ulist.php');
-	}else if(query != undefined){
-		history.replaceState({}, null, './ulist.php?'+query);
-	}
-	layer.closeAll();
-	var ii = layer.load(2, {shade:[0.1,'#fff']});
-	$.ajax({
-		type : 'GET',
-		url : 'ulist-table.php?'+query,
-		dataType : 'html',
-		cache : false,
-		success : function(data) {
-			layer.close(ii);
-			$("#listTable").html(data)
-		},
-		error:function(data){
-			layer.msg('服务器错误');
-			return false;
-		}
-	});
-}
-function searchUser(){
-	var column=$("select[name='column']").val();
-	var value=$("input[name='value']").val();
-	if(value==''){
-		listTable();
-	}else{
-		listTable('column='+column+'&value='+value);
-	}
-	return false;
-}
+var pay_domain = '<?php echo ($conf['pay_domain_forbid']==1 || $conf['pay_domain_open']==1)?'true':'false';?>';
+$(document).ready(function(){
+	updateToolbar();
+	const defaultPageSize = 30;
+	const pageNumber = typeof window.$_GET['pageNumber'] != 'undefined' ? parseInt(window.$_GET['pageNumber']) : 1;
+	const pageSize = typeof window.$_GET['pageSize'] != 'undefined' ? parseInt(window.$_GET['pageSize']) : defaultPageSize;
+
+	$("#listTable").bootstrapTable({
+		url: 'ajax_user.php?act=userList',
+		pageNumber: pageNumber,
+		pageSize: pageSize,
+		classes: 'table table-striped table-hover table-bordered',
+		columns: [
+			{
+				field: 'uid',
+				title: '商户号/用户组',
+				formatter: function(value, row, index) {
+					let groupname = row.groupname;
+					if(groupname.length > 14) groupname = groupname.substring(0,14);
+					return '<b>'+value+'</b>[<a href="javascript:showKey('+value+',\''+row.key+'\')">查看密钥</a>]<br/><span onclick="editGroup('+value+','+row.gid+')" style="color:blue">'+groupname+'</span>';
+				}
+			},
+			{
+				field: 'money',
+				title: '余额',
+				formatter: function(value, row, index) {
+					return '<b><a href="javascript:showRecharge('+row.uid+')">'+value+'</a></b>';
+				}
+			},
+			{
+				field: 'settle_id',
+				title: '结算账号/姓名',
+				formatter: function(value, row, index) {
+					return row.account ? '<span onclick="inputInfo('+row.uid+')" title="点击修改结算账号">'+(value==2?'<font color="green">WX:</font>':'')+(value==3?'<font color="green">QQ:</font>':'')+row.account+'<br/>'+row.username+'</span>' : '<span onclick="inputInfo('+row.uid+')" title="点击修改结算账号">未设置</span>';
+				}
+			},
+			{
+				field: 'qq',
+				title: '联系方式',
+				formatter: function(value, row, index) {
+					return (value ? 'QQ:'+(isMobile() ? '<a href="mqqwpa://im/chat?chat_type=wpa&version=1&src_type=web&web_src=oicqzone.com&uin='+value+'">'+value+'</a>' : '<a href="tencent://message/?uin='+value+'&amp;Site=qq&amp;Menu=yes">'+value+'</a>') : '')+'<br/>'+(row.phone?row.phone:row.email);
+				}
+			},
+			{
+				field: 'url',
+				title: '域名/添加时间',
+				formatter: function(value, row, index) {
+					return (value?value:'')+(pay_domain=='true'?' [<a href="./domain.php?uid='+row.uid+'" target="_blank" >域名</a>]':'')+'<br/>'+row.addtime;
+				}
+			},
+			{
+				field: 'status',
+				title: '状态',
+				formatter: function(value, row, index) {
+					let html = '';
+					if(value == '1'){
+						html += '<a href="javascript:setStatus('+row.uid+',\'user\',0)"><font color=green><i class="fa fa-check-circle"></i>正常</font></a>';
+					}else{
+						html += '<a href="javascript:setStatus('+row.uid+',\'user\',1)"><font color=red><i class="fa fa-times-circle"></i>封禁</font></a>';
+					}
+					html += '&nbsp;';
+					if(row.cert == '1'){
+						html += '<a href="javascript:showCert('+row.uid+')" title="查看实名认证信息"><font color=green><i class="fa fa-check-circle-o"></i>已实名</font></a>';
+					}else{
+						html += '<a href="javascript:showCert('+row.uid+')" title="查看实名认证信息"><font color=grey><i class="fa fa-times-circle"></i>未实名</font></a>';
+					}
+					html += '<br/>';
+					if(row.pay == '2'){
+						html += '<a href="javascript:setStatus('+row.uid+',\'pay\',1)"><font color=orange><i class="fa fa-exclamation-circle"></i>未审核</font></a>';
+					}else if(row.pay == '1'){
+						html += '<a href="javascript:setStatus('+row.uid+',\'pay\',0)"><font color=green><i class="fa fa-check-circle"></i>支付</font></a>';
+					}else{
+						html += '<a href="javascript:setStatus('+row.uid+',\'pay\',1)"><font color=red><i class="fa fa-times-circle"></i>支付</font></a>';
+					}
+					html += '&nbsp;';
+					if(row.settle == '1'){
+						html += '<a href="javascript:setStatus('+row.uid+',\'settle\',0)"><font color=green><i class="fa fa-check-circle"></i>结算</font></a>';
+					}else{
+						html += '<a href="javascript:setStatus('+row.uid+',\'settle\',1)"><font color=red><i class="fa fa-times-circle"></i>结算</font></a>';
+					}
+					return html;
+				}
+			},
+			{
+				field: '',
+				title: '操作',
+				formatter: function(value, row, index) {
+					return '<a href="./uset.php?my=edit&uid='+row.uid+'" class="btn btn-xs btn-info">编辑</a>&nbsp;<a href="./sso.php?uid='+row.uid+'" target="_blank" class="btn btn-xs btn-success">登录</a>&nbsp;<a href="./uset.php?my=delete&uid='+row.uid+'" class="btn btn-xs btn-danger" onclick="return confirm(\'你确实要删除此商户吗？\');">删除</a><br/><a href="./order.php?uid='+row.uid+'" target="_blank" class="btn btn-xs btn-default">订单</a>&nbsp;<a href="./slist.php?uid='+row.uid+'" target="_blank" class="btn btn-xs btn-default">结算</a>&nbsp;<a href="./record.php?column=uid&value='+row.uid+'" target="_blank" class="btn btn-xs btn-default">明细</a>';
+				}
+			},
+		],
+	})
+})
+
 function showKey(uid,key){
 	var clipboard;
 	var confirmobj = layer.confirm(key+'<input type="hidden" id="copyContent" value="'+key+'"/>', {
@@ -138,7 +193,7 @@ function showKey(uid,key){
 	}, function(){
 		$.ajax({
 			type : 'GET',
-			url : 'ajax.php?act=resetUser&uid='+uid,
+			url : 'ajax_user.php?act=resetUser&uid='+uid,
 			dataType : 'json',
 			success : function(data) {
 				if(data.code == 0){
@@ -160,11 +215,11 @@ function showKey(uid,key){
 function setStatus(uid,type,status) {
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=setUser&uid='+uid+'&type='+type+'&status='+status,
+		url : 'ajax_user.php?act=setUser&uid='+uid+'&type='+type+'&status='+status,
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){
-				listTable();
+				searchSubmit();
 			}else{
 				layer.msg(data.msg, {icon:2, time:1500});
 			}
@@ -191,7 +246,7 @@ function saveGroup(uid){
 	var gid = $("#gid").val();
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=setUser&uid='+uid+'&type=group&status='+gid,
+		url : 'ajax_user.php?act=setUser&uid='+uid+'&type=group&status='+gid,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -199,8 +254,7 @@ function saveGroup(uid){
 				layer.alert(data.msg,{
 					icon: 1,
 					closeBtn: false
-				});
-				listTable();
+				},function(){layer.closeAll();searchSubmit();});
 			}else{
 				layer.alert(data.msg, {icon: 2})
 			}
@@ -219,7 +273,7 @@ function inputInfo(uid) {
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=user_settle_info&uid='+uid,
+		url : 'ajax_user.php?act=user_settle_info&uid='+uid,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -252,14 +306,15 @@ function saveInfo(uid) {
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : "POST",
-		url : "ajax.php?act=user_settle_save",
+		url : "ajax_user.php?act=user_settle_save",
 		data : {uid:uid,pay_type:pay_type,pay_account:pay_account,pay_name:pay_name},
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
 			if(data.code == 0){
+				layer.closeAll();
 				layer.msg('保存成功！');
-				listTable();
+				searchSubmit();
 			}else{
 				layer.alert(data.msg);
 			}
@@ -271,13 +326,17 @@ function showCert(uid) {
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=user_cert&uid='+uid,
+		url : 'ajax_user.php?act=user_cert&uid='+uid,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
 			if(data.code == 0){
 				var item = '<table class="table table-condensed table-hover">';
-				item += '<tr><td class="info">认证途径</td><td colspan="5">'+(data.cert==1?'支付宝快捷认证':'未实名认证')+'</td></tr><tr><td class="info">真实姓名</td><td colspan="5">'+data.certname+'</td></tr><tr><td class="info">身份证号</td><td colspan="5">'+data.certno+'</td></tr><tr><td class="info">认证时间</td><td colspan="5">'+data.certtime+'</td></tr>';
+				if(data.data.certtype==1){
+					item += '<tr><td class="info">商户号</td><td colspan="5">'+uid+'</td></tr><tr><td class="info">认证类型</td><td colspan="5">企业认证</td></tr><tr><td class="info">认证方式</td><td colspan="5">'+data.data.certmethodname+'</td><tr><tr><td class="info">公司名称</td><td colspan="5">'+data.data.certcorpname+'</td><tr><td class="info">营业执照号码</td><td colspan="5">'+data.data.certcorpno+'</td><tr><td class="info">法人姓名</td><td colspan="5">'+data.data.certname+'</td></tr><tr><td class="info">法人身份证号</td><td colspan="5">'+data.data.certno+'</td></tr><tr><td class="info">认证时间</td><td colspan="5">'+data.data.certtime+'</td></tr>';
+				}else{
+					item += '<tr><td class="info">商户号</td><td colspan="5">'+uid+'</td></tr><tr><td class="info">认证类型</td><td colspan="5">个人认证</td></tr><tr><td class="info">认证方式</td><td colspan="5">'+data.data.certmethodname+'</td><tr><tr><td class="info">真实姓名</td><td colspan="5">'+data.data.certname+'</td></tr><tr><td class="info">身份证号</td><td colspan="5">'+data.data.certno+'</td></tr><tr><td class="info">认证时间</td><td colspan="5">'+data.data.certtime+'</td></tr>';
+				}
 				item += '</table>';
 				layer.open({
 				  type: 1,
@@ -305,15 +364,15 @@ $(document).ready(function(){
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
 		$.ajax({
 			type : "POST",
-			url : "ajax.php?act=recharge",
+			url : "ajax_user.php?act=recharge",
 			data : {uid:uid,actdo:actdo,rmb:rmb},
 			dataType : 'json',
 			success : function(data) {
 				layer.close(ii);
 				if(data.code == 0){
-					layer.msg('修改余额成功');
+					layer.msg('修改余额成功', {time:800});
 					$('#modal-rmb').modal('hide');
-					listTable();
+					searchSubmit();
 				}else{
 					layer.alert(data.msg);
 				}
@@ -324,6 +383,5 @@ $(document).ready(function(){
 			}
 		});
 	});
-	listTable();
 })
 </script>

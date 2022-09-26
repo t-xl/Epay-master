@@ -15,7 +15,7 @@ if(isset($_COOKIE["user_token"]))
 	$token=authcode(daddslashes($_COOKIE['user_token']), 'DECODE', SYS_KEY);
 	list($uid, $sid, $expiretime) = explode("\t", $token);
 	$uid = intval($uid);
-	$userrow=$DB->getRow("SELECT * FROM pay_user WHERE uid='{$uid}' limit 1");
+	$userrow=$DB->getRow("SELECT * FROM pre_user WHERE uid='{$uid}' limit 1");
 	$session=md5($userrow['uid'].$userrow['key'].$password_hash);
 	if($session==$sid && $expiretime>time()) {
 		$islogin2=1;

@@ -15,19 +15,19 @@ if(!defined('IN_CRONLITE'))exit();
 <link href="<?php echo STATIC_ROOT?>css/index960.css" rel="stylesheet" type="text/css" />
 <link href="<?php echo STATIC_ROOT?>css/index720.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/aos.css">
-<script src="//cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
 <script src="<?php echo STATIC_ROOT?>js/aos.js"></script>
 <script src="<?php echo STATIC_ROOT?>js/main.js"></script>
 <!--[if lt IE 9]>
-  <script src="//cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="//cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <script src="<?php echo $cdnpublic?>html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="<?php echo $cdnpublic?>respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
 	<!--头-开始-->
     <div class="head backFFF">
     	<div class="headK">
-        	<div class="Logo fl"><img src="assets/img/logo.png"  /></div>
+        	<div class="Logo fl"><img src="assets/img/logo.png" style="max-height:60px;" /></div>
             <div class="MenuPC fr">
       			                <a href="/user/reg.php" class="hdReg fr" style="float: right">注册</a>
                 <a href="/user/" class="hdLog fr" style="float: right">登录</a>
@@ -280,7 +280,7 @@ if(!defined('IN_CRONLITE'))exit();
     </div>
     <div class="footC">
     	<p><?php echo $conf['footer']?></p>
-        <p><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;2020&nbsp;All Rights Reserved.</p>
+        <p><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;<?php echo date("Y")?>&nbsp;All Rights Reserved.</p>
 	</div>
 </div> 
 <!--尾-结束-->

@@ -25,7 +25,7 @@ if(!defined('IN_CRONLITE'))exit();
 
 </div>
 <div class="xinxi">
-<p><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;2020&nbsp;All Rights Reserved.&nbsp;&nbsp;<?php echo $conf['footer']?></p>
+<p><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;<?php echo date("Y")?>&nbsp;All Rights Reserved.&nbsp;&nbsp;<?php echo $conf['footer']?></p>
 </div>
 <script type="text/javascript">
         if('ontouchend' in document.body &amp;&amp; $(window).width() < 996){

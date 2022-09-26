@@ -3,8 +3,9 @@
 /* 导航 */
 .navBD12{ border-bottom:1px solid #89c1ed;}
 .nav12{ height:60px; padding-top:14px;}
-.nav12-left{ float:left;}
-.nav12-right{ float:right;}
+.nav12 img{ max-height:100%;}
+.nav12-left{ height:100%;float:left;}
+.nav12-right{ height:100%;float:right;padding-top: 7px;font-size: 22px;color: #6586ff;}
 .show-xs{ display:none;}
 
 /* 订单金额 */

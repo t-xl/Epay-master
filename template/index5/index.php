@@ -12,7 +12,7 @@ if(!defined('IN_CRONLITE'))exit();
 		<meta name="description" content="<?php echo $conf['description']?>">
 		<link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/qietu.css">
 		<link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/iconfont.css">
-		<link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/animate.min.css">
+		<link rel="stylesheet" href="<?php echo $cdnpublic?>animate.css/3.7.2/animate.min.css">
 		<link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/style.css">
 		<link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/responsive.css">
 	</head>
@@ -693,8 +693,8 @@ if(!defined('IN_CRONLITE'))exit();
 						友情链接
 					</dt>
 					<dd>
-						<a href="http://blog.cccyun.cn" target="_blank">
-							缤纷彩虹天地
+						<a href="./" target="_blank">
+						<?php echo $conf['sitename']?>
 						</a>
 					</dd>
 					<dd>
@@ -707,7 +707,7 @@ if(!defined('IN_CRONLITE'))exit();
 		</div>
 		<div class="copyright">
 			<div class="wrapper">
-				<?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved.&nbsp;<?php echo $conf['footer']?>
+				<?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;<?php echo date("Y")?>&nbsp;All Rights Reserved.&nbsp;<?php echo $conf['footer']?>
 			</div>
 		</div>
 		<div class="sidebar">
@@ -720,11 +720,11 @@ if(!defined('IN_CRONLITE'))exit();
 				</li>
 			</ul>
 		</div>
-		<script type="text/javascript" src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js">
+		<script type="text/javascript" src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js">
 		</script>
 		<script type="text/javascript" src="<?php echo STATIC_ROOT?>js/jquery.glide.js">
 		</script>
-		<script type="text/javascript" src="<?php echo STATIC_ROOT?>js/wow.min.js">
+		<script type="text/javascript" src="<?php echo $cdnpublic?>wow/1.1.2/wow.min.js">
 		</script>
 		<script type="text/javascript" src="<?php echo STATIC_ROOT?>js/script.js">
 		</script>

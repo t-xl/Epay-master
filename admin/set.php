@@ -11,12 +11,13 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
     <div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
 <?php
 $mod=isset($_GET['mod'])?$_GET['mod']:null;
-$mods=['site'=>'网站信息','pay'=>'支付与结算','transfer'=>'企业付款','oauth'=>'快捷登录','certificate'=>'实名认证','template'=>'首页模板','gonggao'=>'公告与排版','mail'=>'邮箱与短信','upimg'=>'LOGO设置','iptype'=>'IP地址','cron'=>'计划任务','account'=>'修改密码'];
+$mods=['site'=>'网站信息','pay'=>'支付与结算','transfer'=>'企业付款','oauth'=>'快捷登录','certificate'=>'实名认证','template'=>'首页模板','gonggao'=>'公告与排版','mail'=>'邮箱与短信','upimg'=>'LOGO设置','iptype'=>'IP地址','cron'=>'计划任务','proxy'=>'中转代理','account'=>'修改密码'];
 ?>
 <ul class="nav nav-pills">
 	<?php foreach($mods as $key=>$name){echo '<li class="'.($key==$mod?'active':null).'"><a href="set.php?mod='.$key.'">'.$name.'</a></li>';} ?>
 </ul>
 <?php
+$conf=$CACHE->pre_fetch();
 if($mod=='site'){
 ?>
 <div class="panel panel-primary">
@@ -44,8 +45,12 @@ if($mod=='site'){
 	  <div class="col-sm-10"><input type="text" name="orgname" value="<?php echo $conf['orgname']; ?>" class="form-control"/></div>
 	</div><br/>
 	<div class="form-group">
-	  <label class="col-sm-2 control-label">本站网址</label>
-	  <div class="col-sm-10"><input type="text" name="localurl" value="<?php echo $conf['localurl']; ?>" class="form-control"/><font color="green">必须以http://或https://开头，以/结尾，填错会导致订单无法回调</font></div>
+	  <label class="col-sm-2 control-label">回调专用网址</label>
+	  <div class="col-sm-10"><input type="text" name="localurl" value="<?php echo $conf['localurl']; ?>" class="form-control" placeholder="留空则与本站网址一致"/><font color="green">必须以http://或https://开头，以/结尾，填错会导致订单无法回调</font></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">用户对接网址</label>
+	  <div class="col-sm-10"><input type="text" name="apiurl" value="<?php echo $conf['apiurl']; ?>" class="form-control" placeholder="留空则与本站网址一致"/><font color="green">用户中心显示的支付对接地址，留空则与本站网址一致</font></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">联系邮箱</label>
@@ -73,20 +78,22 @@ if($mod=='site'){
 	</div><br/>
 	<div id="setform1" style="<?php echo $conf['reg_open']==0?'display:none;':null; ?>">
 	<div class="form-group">
+	  <label class="col-sm-2 control-label">开启注册审核</label>
+	  <div class="col-sm-10"><select class="form-control" name="user_review" default="<?php echo $conf['user_review']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+	</div><br/>
+	<div class="form-group">
 	  <label class="col-sm-2 control-label">注册付费</label>
 	  <div class="col-sm-10"><select class="form-control" name="reg_pay" default="<?php echo $conf['reg_pay']?>"><option value="1">开启</option><option value="0">关闭</option></select></div>
 	</div><br/>
-	<div id="setform2" style="<?php echo $conf['reg_pay']==0?'display:none;':null; ?>">
-	<div class="form-group">
+	<div class="form-group" style="<?php echo $conf['reg_pay']==0?'display:none;':null; ?>">
 	  <label class="col-sm-2 control-label">注册付费金额</label>
 	  <div class="col-sm-10"><input type="text" name="reg_pay_price" value="<?php echo $conf['reg_pay_price']; ?>" class="form-control"/></div>
 	</div><br/>
+	</div>
 	<div class="form-group">
-	  <label class="col-sm-2 control-label">注册付费收款商户ID</label>
-	  <div class="col-sm-10"><input type="text" name="reg_pay_uid" value="<?php echo $conf['reg_pay_uid']; ?>" class="form-control" placeholder="填写在本站注册的商户UID"/></div>
+	  <label class="col-sm-2 control-label">用户编辑自定义接口信息</label>
+	  <div class="col-sm-10"><select class="form-control" name="user_settings_edit" default="<?php echo $conf['user_settings_edit']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
 	</div><br/>
-	</div>
-	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">测试支付</label>
 	  <div class="col-sm-10"><select class="form-control" name="test_open" default="<?php echo $conf['test_open']?>"><option value="1">开启</option><option value="0">关闭</option></select></div>
@@ -110,8 +117,29 @@ if($mod=='site'){
 	  <div class="col-sm-10"><select class="form-control" name="captcha_open_login" default="<?php echo $conf['captcha_open_login']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
 	</div><br/>
 	<div class="form-group">
+	  <label class="col-sm-2 control-label">密钥登录</label>
+	  <div class="col-sm-10"><select class="form-control" name="close_keylogin" default="<?php echo $conf['close_keylogin']?>"><option value="0">开启</option><option value="1">关闭</option></select></div>
+	</div><br/>
+	<div class="form-group">
 	  <label class="col-sm-2 control-label">用户中心风格</label>
 	  <div class="col-sm-10"><select class="form-control" name="user_style" default="<?php echo $conf['user_style']?>"><option value="0">黑色（1）</option><option value="1">黑色（2）</option><option value="2">棕色（1）</option><option value="3">棕色（2）</option><option value="4">蓝色（1）</option><option value="5">蓝色（2）</option><option value="6">紫色（1）</option><option value="7">紫色（2）</option></select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">公共静态资源CDN</label>
+	  <div class="col-sm-10"><select class="form-control" name="cdnpublic" default="<?php echo $conf['cdnpublic']?>">
+	  <option value="0">七牛云CDN</option>
+	  <option value="1">360CDN</option>
+	  <option value="2">BootCDN</option>
+	  <option value="4">今日头条CDN</option>
+	  </select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">首页显示模式</label>
+	  <div class="col-sm-10"><select class="form-control" name="homepage" default="<?php echo $conf['homepage']?>"><option value="0">默认显示首页</option><option value="1">直接跳转登录页面</option><option value="2">显示其它指定网址</option></select></div>
+	</div><br/>
+	<div class="form-group" id="setform4" style="<?php echo $conf['homepage']!=2?'display:none;':null; ?>">
+	  <label class="col-sm-2 control-label">显示网址URL</label>
+	  <div class="col-sm-10"><input type="text" name="homepage_url" value="<?php echo $conf['homepage_url']; ?>" class="form-control" placeholder="将以frame方式显示"/></div>
 	</div><br/>
 	<div class="form-group">
 	  <div class="col-sm-offset-2 col-sm-10"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
@@ -142,9 +170,17 @@ $("select[name='test_open']").change(function(){
 		$("#setform3").hide();
 	}
 });
+$("select[name='homepage']").change(function(){
+	if($(this).val() == 2){
+		$("#setform4").show();
+	}else{
+		$("#setform4").hide();
+	}
+});
 </script>
 <?php
 }elseif($mod=='paypwd_n' && $_POST['do']=='submit'){
+	if(!checkRefererHost())exit;
 	$oldpwd=$_POST['oldpwd'];
 	$newpwd=$_POST['newpwd'];
 	$newpwd2=$_POST['newpwd2'];
@@ -159,6 +195,7 @@ $("select[name='test_open']").change(function(){
 	if($ad)showmsg('修改成功！',1);
 	else showmsg('修改失败！<br/>'.$DB->error(),4);
 }elseif($mod=='account_n' && $_POST['do']=='submit'){
+	if(!checkRefererHost())exit;
 	$user=$_POST['user'];
 	$oldpwd=$_POST['oldpwd'];
 	$newpwd=$_POST['newpwd'];
@@ -301,7 +338,6 @@ $(document).ready(function(){
 </script>
 <?php
 }elseif($mod=='pay'){
-	$wxpay_channel = $DB->getAll("SELECT * FROM pre_channel WHERE plugin='wxpay'");
 ?>
 <div class="panel panel-primary">
 <div class="panel-heading"><h3 class="panel-title">支付与结算配置</h3></div>
@@ -326,7 +362,19 @@ $(document).ready(function(){
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">商品名称自定义</label>
-	  <div class="col-sm-9"><input type="text" name="ordername" value="<?php echo $conf['ordername']; ?>" class="form-control" placeholder="默认使用原商品名称"/><font color="green">支持变量值：[name]原商品名称，[time]时间戳，[qq]当前商户的联系QQ</font></div>
+	  <div class="col-sm-9"><input type="text" name="ordername" value="<?php echo $conf['ordername']; ?>" class="form-control" placeholder="默认使用原商品名称"/><font color="green">支持变量值：[name]原商品名称，[order]支付订单号，[time]时间戳，[qq]当前商户的联系QQ</font></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">扫码页面隐藏商品名称</label>
+	  <div class="col-sm-9"><select class="form-control" name="pageordername" default="<?php echo $conf['pageordername']?>"><option value="0">否</option><option value="1">是</option></select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">回调参数去除商品名称</label>
+	  <div class="col-sm-9"><select class="form-control" name="notifyordername" default="<?php echo $conf['notifyordername']?>"><option value="0">否</option><option value="1">是</option></select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">未填联系QQ禁止支付</label>
+	  <div class="col-sm-9"><select class="form-control" name="forceqq" default="<?php echo $conf['forceqq']?>"><option value="0">否</option><option value="1">是</option></select></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">本站网址(支付宝专用)</label>
@@ -341,12 +389,37 @@ $(document).ready(function(){
 	  <div class="col-sm-9"><select class="form-control" name="recharge" default="<?php echo $conf['recharge']?>"><option value="1">开启</option><option value="0">关闭</option></select></div>
 	</div><br/>
 	<div class="form-group">
-	  <label class="col-sm-3 control-label">开启一码支付</label>
+	  <label class="col-sm-3 control-label">注册/充值/购买会员收款商户ID</label>
+	  <div class="col-sm-9"><input type="text" name="reg_pay_uid" value="<?php echo $conf['reg_pay_uid']; ?>" class="form-control" placeholder="填写在本站注册的商户UID"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">开启聚合收款码</label>
 	  <div class="col-sm-9"><select class="form-control" name="onecode" default="<?php echo $conf['onecode']?>"><option value="1">开启</option><option value="0">关闭</option></select></div>
 	</div><br/>
 	<div class="form-group">
-	  <label class="col-sm-3 control-label">微信短网址生成通道</label>
-	  <div class="col-sm-9"><select class="form-control" name="wxurl" default="<?php echo $conf['wxurl']?>"><option value="0">关闭</option><?php foreach($wxpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为wxpay的支付通道<br/>只需开通服务号即可使用(可以不开通微信支付)</font></div>
+	  <label class="col-sm-3 control-label">满多少随机增减金额</label>
+	  <div class="col-sm-9"><input type="text" name="pay_payaddstart" value="<?php echo $conf['pay_payaddstart']; ?>" class="form-control" placeholder="订单满多少随机增减金额，留空不随机增减"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">随机增减金额范围</label>
+	  <div class="col-sm-4"><input type="text" name="pay_payaddmin" value="<?php echo $conf['pay_payaddmin']; ?>" class="form-control" placeholder="最小增加金额，负数为减少"/></div>
+	  <div class="col-sm-4"><input type="text" name="pay_payaddmax" value="<?php echo $conf['pay_payaddmax']; ?>" class="form-control" placeholder="最大增加金额，负数为减少"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">开启授权支付域名添加</label>
+	  <div class="col-sm-9"><select class="form-control" name="pay_domain_open" default="<?php echo $conf['pay_domain_open']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">未授权支付域名禁止支付</label>
+	  <div class="col-sm-9"><select class="form-control" name="pay_domain_forbid" default="<?php echo $conf['pay_domain_forbid']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">支付IP黑名单</label>
+	  <div class="col-sm-9"><textarea class="form-control" name="blockips" rows="2" placeholder="多个用|隔开"><?php echo $conf['blockips']?></textarea></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">支付账号黑名单</label>
+	  <div class="col-sm-9"><textarea class="form-control" name="blockusers" rows="2" placeholder="多个用|隔开，只支持微信公众号支付和支付宝JS支付"><?php echo $conf['blockusers']?></textarea></div>
 	</div><br/>
 	<h4 style="text-align: center;">结算配置</h4>
 	<div class="form-group">
@@ -355,7 +428,7 @@ $(document).ready(function(){
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">手动申请结算周期</label>
-	  <div class="col-sm-9"><select class="form-control" name="settle_type" default="<?php echo $conf['settle_type']?>"><option value="0">T+0（可提现全部余额）</option><option value="1">T+1（可提现1天前的余额）</option></select><font color="green">该选项只适用于手动申请结算</font></div>
+	  <div class="col-sm-9"><select class="form-control" name="settle_type" default="<?php echo $conf['settle_type']?>"><option value="0">T+0（可提现全部余额）</option><option value="1">T+1（可提现1天前的余额）</option><option value="2">T+0秒到账（申请提现后通过转账接口转账）</option></select><font color="green">该选项只适用于手动申请结算</font></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">最低结算金额</label>
@@ -408,6 +481,10 @@ $(document).ready(function(){
 	  <div class="col-sm-10"><textarea class="form-control" name="modal" rows="5" placeholder="不填写则不显示弹出公告"><?php echo $conf['modal']?></textarea></div>
 	</div><br/>
 	<div class="form-group">
+	  <label class="col-sm-2 control-label">注册页面弹出公告</label>
+	  <div class="col-sm-10"><textarea class="form-control" name="zhuce" rows="5" placeholder="不填写则不显示弹出公告"><?php echo $conf['zhuce']?></textarea></div>
+	</div><br/>
+	<div class="form-group">
 	  <label class="col-sm-2 control-label">首页底部排版</label>
 	  <div class="col-sm-10"><textarea class="form-control" name="footer" rows="3" placeholder="可填写备案号等"><?php echo $conf['footer']?></textarea></div>
 	</div><br/>
@@ -430,34 +507,24 @@ $(document).ready(function(){
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">付款方显示名称</label>
-	  <div class="col-sm-9"><input type="text" name="transfer_name" value="<?php echo $conf['transfer_name']; ?>" class="form-control"/></div>
+	  <div class="col-sm-9"><input type="text" name="transfer_name" value="<?php echo $conf['transfer_name']; ?>" class="form-control" placeholder="支付宝转账时显示"/></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">付款默认备注</label>
-	  <div class="col-sm-9"><input type="text" name="transfer_desc" value="<?php echo $conf['transfer_desc']; ?>" class="form-control"/></div>
+	  <div class="col-sm-9"><input type="text" name="transfer_desc" value="<?php echo $conf['transfer_desc']; ?>" class="form-control" placeholder="微信和QQ转账时显示"/></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">支付宝转账接口通道</label>
-	  <div class="col-sm-9"><select class="form-control" name="transfer_alipay" default="<?php echo $conf['transfer_alipay']?>"><option value="0">关闭</option><?php foreach($alipay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道</font></div>
+	  <div class="col-sm-9"><select class="form-control" name="transfer_alipay" default="<?php echo $conf['transfer_alipay']?>"><option value="0">关闭</option><?php foreach($alipay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道，同时也是银行卡转账通道<br/>如果使用公钥证书模式，请将<font color="red">应用公钥证书、支付宝公钥证书、支付宝根证书</font>3个crt文件放置于<font color="red">/plugins/alipay/cert/</font>文件夹（或<font color="red">/plugins/alipay/cert/应用APPID/</font>文件夹）</font></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">微信企业付款通道</label>
-	  <div class="col-sm-9"><select class="form-control" name="transfer_wxpay" default="<?php echo $conf['transfer_wxpay']?>"><option value="0">关闭</option><?php foreach($wxpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为wxpay的支付通道<br/>请将<a href="https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=4_3" target="_blank" rel="noreferrer">API证书</a>放置于/plugins/wxpay/cert/文件夹</font></div>
+	  <div class="col-sm-9"><select class="form-control" name="transfer_wxpay" default="<?php echo $conf['transfer_wxpay']?>"><option value="0">关闭</option><?php foreach($wxpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为wxpay的支付通道<br/>请将<a href="https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=4_3" target="_blank" rel="noreferrer">API证书</a>放置于<font color="red">/plugins/wxpay/cert/</font>文件夹（或<font color="red">/plugins/wxpay/cert/商户ID/</font>文件夹）</font></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">QQ钱包企业付款通道</label>
-	  <div class="col-sm-9"><select class="form-control" name="transfer_qqpay" default="<?php echo $conf['transfer_qqpay']?>"><option value="0">关闭</option><?php foreach($qqpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为qqpay的支付通道<br/>请将<a href="https://qpay.qq.com/buss/wiki/206/1213" target="_blank" rel="noreferrer">API证书</a>放置于/plugins/qqpay/cert/文件夹</font></div>
+	  <div class="col-sm-9"><select class="form-control" name="transfer_qqpay" default="<?php echo $conf['transfer_qqpay']?>"><option value="0">关闭</option><?php foreach($qqpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为qqpay的支付通道<br/>请将<a href="https://qpay.qq.com/buss/wiki/206/1213" target="_blank" rel="noreferrer">API证书</a>放置于<font color="red">/plugins/qqpay/cert/</font>文件夹（或<font color="red">/plugins/qqpay/cert/商户ID/</font>文件夹）</font></div>
 	</div><br/>
-	<div id="setform1" style="<?php echo $conf['transfer_qqpay']==0?'display:none;':null; ?>">
-	<div class="form-group">
-	  <label class="col-sm-3 control-label">QQ钱包操作员账号</label>
-	  <div class="col-sm-9"><input type="text" name="qq_op_userid" value="<?php echo $conf['qq_op_userid']; ?>" class="form-control"/></div>
-	</div><br/>
-	<div class="form-group">
-	  <label class="col-sm-3 control-label">QQ钱包操作员密码</label>
-	  <div class="col-sm-9"><input type="text" name="qq_op_userpwd" value="<?php echo $conf['qq_op_userpwd']; ?>" class="form-control"/></div>
-	</div><br/>
-	</div>
 	<div class="form-group">
 	  <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
 	 </div>
@@ -465,15 +532,6 @@ $(document).ready(function(){
   </form>
 </div>
 </div>
-<script>
-$("select[name='transfer_qqpay']").change(function(){
-	if($(this).val() > 0){
-		$("#setform1").show();
-	}else{
-		$("#setform1").hide();
-	}
-});
-</script>
 <?php
 }elseif($mod=='certificate'){
 	$alipay_channel = $DB->getAll("SELECT * FROM pre_channel WHERE plugin='alipay'");
@@ -483,17 +541,63 @@ $("select[name='transfer_qqpay']").change(function(){
 <div class="panel-body">
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
     <div class="form-group">
-	  <label class="col-sm-3 control-label">实名认证接口通道</label>
-	  <div class="col-sm-9"><select class="form-control" name="cert_channel" default="<?php echo $conf['cert_channel']?>"><option value="0">关闭</option><?php foreach($alipay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道，需要申请支付宝身份验证接口</font></div>
+	  <label class="col-sm-3 control-label">是否开启实名认证</label>
+	  <div class="col-sm-9"><select class="form-control" name="cert_open" default="<?php echo $conf['cert_open']?>"><option value="0">关闭</option><option value="1">支付宝身份验证</option><option value="3">支付宝实名信息验证</option><option value="5">阿里云金融级实人认证</option><option value="4">微信扫码实名认证</option><option value="2">手机号三要素实名认证</option></select></div>
 	</div><br/>
-	<div id="setform1" style="<?php echo $conf['cert_channel']==0?'display:none;':null; ?>">
+	<div id="setform2" style="<?php echo $conf['cert_open']!=1&&$conf['cert_open']!=3?'display:none;':null; ?>">
+    <div class="form-group">
+	  <label class="col-sm-3 control-label">支付宝通道选择</label>
+	  <div class="col-sm-9"><select class="form-control" name="cert_channel" default="<?php echo $conf['cert_channel']?>"><option value="0">关闭</option><?php foreach($alipay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道</font></div>
+	</div><br/>
+	</div>
+	<div id="setform3" style="<?php echo $conf['cert_open']!=2?'display:none;':null; ?>">
+    <div class="form-group">
+	  <label class="col-sm-3 control-label">APPCODE</label>
+	  <div class="col-sm-9"><input type="text" name="cert_appcode" value="<?php echo $conf['cert_appcode']; ?>" class="form-control" placeholder=""/></div>
+	</div><br/>
+	</div>
+	<div id="setform4" style="<?php echo $conf['cert_open']!=4?'display:none;':null; ?>">
+    <div class="form-group">
+	  <label class="col-sm-3 control-label">腾讯云SecretId</label>
+	  <div class="col-sm-9"><input type="text" name="cert_qcloudid" value="<?php echo $conf['cert_qcloudid']; ?>" class="form-control" placeholder=""/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">腾讯云SecretKey</label>
+	  <div class="col-sm-9"><input type="text" name="cert_qcloudkey" value="<?php echo $conf['cert_qcloudkey']; ?>" class="form-control" placeholder=""/></div>
+	</div><br/>
+	</div>
+	<div id="setform5" style="<?php echo $conf['cert_open']!=5?'display:none;':null; ?>">
+    <div class="form-group">
+	  <label class="col-sm-3 control-label">阿里云AccessKeyId</label>
+	  <div class="col-sm-9"><input type="text" name="cert_aliyunid" value="<?php echo $conf['cert_aliyunid']; ?>" class="form-control" placeholder=""/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">阿里云AccessKeySecret</label>
+	  <div class="col-sm-9"><input type="text" name="cert_aliyunkey" value="<?php echo $conf['cert_aliyunkey']; ?>" class="form-control" placeholder=""/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">阿里云认证场景ID</label>
+	  <div class="col-sm-9"><input type="text" name="cert_aliyunsceneid" value="<?php echo $conf['cert_aliyunsceneid']; ?>" class="form-control" placeholder="阿里云金融级实人认证-接入设置里面"/></div>
+	</div><br/>
+	</div>
+	<div id="setform1" style="<?php echo $conf['cert_open']==0?'display:none;':null; ?>">
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">开启企业认证方式</label>
+	  <div class="col-sm-9"><select class="form-control" name="cert_corpopen" default="<?php echo $conf['cert_corpopen']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+	</div><br/>
+	<div id="setform6" style="<?php echo $conf['cert_corpopen']!=1?'display:none;':null; ?>">
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">企业信息校验接口APPCODE</label>
+	  <div class="col-sm-9"><input type="text" name="cert_appcode2" value="<?php echo $conf['cert_appcode2']; ?>" class="form-control" placeholder=""/></div>
+	</div><br/>
+	</div>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">商户强制认证</label>
 	  <div class="col-sm-9"><select class="form-control" name="cert_force" default="<?php echo $conf['cert_force']?>"><option value="0">关闭</option><option value="1">开启</option></select><font color="green">开启后商户必须实名认证，才能正常使用支付接口收款</font></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">实名认证费用</label>
-	  <div class="col-sm-9"><input type="text" name="cert_money" value="<?php echo $conf['cert_money']; ?>" class="form-control" placeholder="留空或0为免认证费用"/><font color="green">由于支付宝身份验证接口是1元/次，所以你可以设置实名认证收费，认证成功从商户余额扣除，如果是付费注册商户建议改为免认证费</font></div>
+	  <div class="col-sm-9"><input type="text" name="cert_money" value="<?php echo $conf['cert_money']; ?>" class="form-control" placeholder="留空或0为免认证费用"/><font color="green">支付宝身份验证接口是1元/次。设置实名认证费用后，认证成功将从商户余额扣除，如果是付费注册商户建议免认证费</font></div>
 	</div><br/>
 	</div>
 	<div class="form-group">
@@ -502,20 +606,61 @@ $("select[name='transfer_qqpay']").change(function(){
 	</div>
   </form>
 </div>
+<div class="panel-footer">
+<span class="glyphicon glyphicon-info-sign"></span>
+<br/><b>支付宝身份验证：</b><a href="https://b.alipay.com/signing/productDetailV2.htm?productId=I1080300001000010588" target="_blank" rel="noreferrer">申请地址</a>，该接口费用1元/人，支持人脸识别，同一个人重复验证不重复收费
+<br/><b>支付宝实名信息验证：</b><a href="https://nengli.alipay.com/abilityprod/detail?abilityCode=AM010501000000075155" target="_blank" rel="noreferrer">申请地址</a>，该接口完全免费，授权回调地址填写：<?php echo $siteurl.'user/oauth.php';?>
+<br/><b>阿里云金融级实人认证：</b><a href="https://www.aliyun.com/product/cloudauth" target="_blank" rel="noreferrer">申请地址</a>｜<a href="https://usercenter.console.aliyun.com/#/manage/ak" target="_blank" rel="noreferrer">获取密钥</a>，该接口费用1元/人，支持人脸识别，同一个人重复验证不重复收费。无需签约，只需要阿里云企业认证账号即可开通。
+<br/><b>微信扫码实名认证：</b><a href="https://cloud.tencent.com/product/faceid" target="_blank" rel="noreferrer">申请地址</a>｜<a href="https://console.cloud.tencent.com/cam/capi" target="_blank" rel="noreferrer">获取密钥</a>，接口0.3元/次
+<br/><b>手机号三要素实名认证：</b><a href="https://market.aliyun.com/products/57000002/cmapi031847.html" target="_blank" rel="noreferrer">点击进入</a>
+<br/><b>企业信息校验接口：</b><a href="https://market.aliyun.com/products/56928005/cmapi00043309.html" target="_blank" rel="noreferrer">点击进入</a>
+</div>
 </div>
 <script>
-$("select[name='cert_channel']").change(function(){
+$("select[name='cert_open']").change(function(){
 	if($(this).val() > 0){
 		$("#setform1").show();
+		if($(this).val() == 2){
+			$("#setform2").hide();
+			$("#setform3").show();
+			$("#setform4").hide();
+			$("#setform5").hide();
+		}else if($(this).val() == 4){
+			$("#setform2").hide();
+			$("#setform3").hide();
+			$("#setform4").show();
+			$("#setform5").hide();
+		}else if($(this).val() == 5){
+			$("#setform2").hide();
+			$("#setform3").hide();
+			$("#setform4").hide();
+			$("#setform5").show();
+		}else{
+			$("#setform2").show();
+			$("#setform3").hide();
+			$("#setform4").hide();
+			$("#setform5").hide();
+		}
 	}else{
 		$("#setform1").hide();
+		$("#setform2").hide();
+		$("#setform3").hide();
+		$("#setform4").hide();
+		$("#setform5").hide();
+	}
+});
+$("select[name='cert_corpopen']").change(function(){
+	if($(this).val() == 1){
+		$("#setform6").show();
+	}else{
+		$("#setform6").hide();
 	}
 });
 </script>
 <?php
 }elseif($mod=='oauth'){
 	$alipay_channel = $DB->getAll("SELECT * FROM pre_channel WHERE plugin='alipay'");
-	$wxpay_channel = $DB->getAll("SELECT * FROM pre_channel WHERE plugin='wxpay'");
+	$wxpay_channel = $DB->getAll("SELECT * FROM pre_weixin WHERE type=0");
 ?>
 <div class="panel panel-primary">
 <div class="panel-heading"><h3 class="panel-title">快捷登录配置</h3></div>
@@ -523,7 +668,7 @@ $("select[name='cert_channel']").change(function(){
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">QQ快捷登录</label>
-	  <div class="col-sm-9"><select class="form-control" name="login_qq" default="<?php echo $conf['login_qq']?>"><option value="0">关闭</option><option value="1">QQ互联官方快捷登录</option><option value="2">QQ扫码快捷登录(有异地风险)</option></select><a href="https://connect.qq.com" target="_blank" rel="noreferrer">申请地址</a>，回调地址填写：<?php echo $siteurl.'user/connect.php';?></div>
+	  <div class="col-sm-9"><select class="form-control" name="login_qq" default="<?php echo $conf['login_qq']?>"><option value="0">关闭</option><option value="1">QQ互联官方快捷登录</option><option value="2">手机QQ扫码登录</option><option value="3">彩虹聚合登录</option></select><a href="https://connect.qq.com" target="_blank" rel="noreferrer">QQ互联申请地址</a>，回调地址填写：<?php echo $siteurl.'user/connect.php';?></div>
 	</div><br/>
 	<div id="setform1" style="<?php echo $conf['login_qq']!=1?'display:none;':null; ?>">
 	<div class="form-group">
@@ -537,11 +682,11 @@ $("select[name='cert_channel']").change(function(){
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">支付宝快捷登录</label>
-	  <div class="col-sm-9"><select class="form-control" name="login_alipay" default="<?php echo $conf['login_alipay']?>"><option value="0">关闭</option><?php foreach($alipay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道</font><br/><a href="https://openhome.alipay.com/platform/appManage.htm" target="_blank" rel="noreferrer">申请地址</a>，应用内添加功能"获取会员信息"，授权回调地址填写：<?php echo $siteurl.'user/oauth.php';?></div>
+	  <div class="col-sm-9"><select class="form-control" name="login_alipay" default="<?php echo $conf['login_alipay']?>"><option value="0">关闭</option><?php foreach($alipay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?><option value="-1">彩虹聚合登录</option></select><font color="green">请先添加支付插件为alipay的支付通道</font><br/><a href="https://openhome.alipay.com/platform/appManage.htm" target="_blank" rel="noreferrer">申请地址</a>，应用内添加功能"获取会员信息"，授权回调地址填写：<?php echo $siteurl.'user/oauth.php';?></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">微信快捷登录</label>
-	  <div class="col-sm-9"><select class="form-control" name="login_wx" default="<?php echo $conf['login_wx']?>"><option value="0">关闭</option><?php foreach($wxpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为wxpay的支付通道</font><br/>需要有服务号，在公众号后台配置网页授权域名：<?php echo $_SERVER['HTTP_HOST'];?></div>
+	  <div class="col-sm-9"><select class="form-control" name="login_wx" default="<?php echo $conf['login_wx']?>"><option value="0">关闭</option><?php foreach($wxpay_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?><option value="-1">彩虹聚合登录</option></select><font color="green">请先<a href="./pay_weixin.php" target="_blank">添加一个微信公众号</a>。需要服务号，并配置网页授权域名：<?php echo $_SERVER['HTTP_HOST'];?></font></div>
 	</div><br/>
 	<div class="form-group">
 	  <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
@@ -550,10 +695,37 @@ $("select[name='cert_channel']").change(function(){
   </form>
 </div>
 </div>
+<?php if($conf['login_qq']==3 || $conf['login_alipay']==-1 || $conf['login_wx']==-1){?>
+<div class="panel panel-primary">
+<div class="panel-heading"><h3 class="panel-title">彩虹聚合登录配置</h3></div>
+<div class="panel-body">
+  <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">聚合登录API接口地址</label>
+	  <div class="col-sm-9"><input type="text" name="login_apiurl" value="<?php echo $conf['login_apiurl']; ?>" class="form-control" placeholder="API地址要以http://开头，以/结尾"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">聚合登录应用APPID</label>
+	  <div class="col-sm-9"><input type="text" name="login_appid" value="<?php echo $conf['login_appid']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-3 control-label">聚合登录应用APPKEY</label>
+	  <div class="col-sm-9"><input type="text" name="login_appkey" value="<?php echo $conf['login_appkey']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
+	 </div>
+	</div>
+  </form>
+</div>
+</div>
+<?php }?>
 <script>
 $("select[name='login_qq']").change(function(){
 	if($(this).val() == 1){
 		$("#setform1").show();
+	}else if($(this).val() == 2){
+		$("#setform1").hide();
 	}else{
 		$("#setform1").hide();
 	}
@@ -645,9 +817,9 @@ $("select[name='mail_cloud']").change(function(){
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">接口选择</label>
-	  <div class="col-sm-10"><select class="form-control" name="sms_api" default="<?php echo $conf['sms_api']?>"><option value="0">978W短信接口</option><option value="1">腾讯云短信接口</option><option value="2">阿里云短信接口</option></select></div>
+	  <div class="col-sm-10"><select class="form-control" name="sms_api" default="<?php echo $conf['sms_api']?>"><option value="0">企信通短信接口</option><option value="1">腾讯云短信接口</option><option value="2">阿里云短信接口</option><option value="3">ThinkAPI短信接口</option></select></div>
 	</div><br/>
-	<div class="form-group" id="showAppId" style="<?php echo $conf['sms_api']==0?'display:none;':null; ?>">
+	<div class="form-group" id="showAppId" style="<?php echo $conf['sms_api']==0||$conf['sms_api']==3?'display:none;':null; ?>">
 	  <label class="col-sm-2 control-label">AppId</label>
 	  <div class="col-sm-10"><input type="text" name="sms_appid" value="<?php echo $conf['sms_appid']; ?>" class="form-control"/></div>
 	</div><br/>
@@ -679,7 +851,7 @@ $("select[name='mail_cloud']").change(function(){
 </div>
 <div class="panel-footer">
 <span class="glyphicon glyphicon-info-sign"></span>
-978W短信接口：<a href="http://admin.978w.cn" target="_blank" rel="noreferrer">点此进入</a><br/>腾讯云短信接口：<a href="https://console.cloud.tencent.com/sms/smslist" target="_blank" rel="noreferrer">点此进入</a><br/>阿里云短信接口：<a href="https://dysms.console.aliyun.com/dysms.htm" target="_blank" rel="noreferrer">点此进入</a>
+腾讯云短信接口：<a href="https://console.cloud.tencent.com/sms/smslist" target="_blank" rel="noreferrer">点此进入</a><br/>阿里云短信接口：<a href="https://dysms.console.aliyun.com/dysms.htm" target="_blank" rel="noreferrer">点此进入</a><br/>ThinkAPI短信接口：<a href="https://www.kancloud.cn/topthink-doc/think-api/2203721" target="_blank" rel="noreferrer">点此进入</a>，签名填写签名ID<br/>企信通短信接口：<a href="http://sms.php.gs/" target="_blank" rel="noreferrer">点此进入</a>
 </div>
 </div>
 <script>
@@ -687,6 +859,9 @@ $("select[name='sms_api']").change(function(){
 	if($(this).val() == 0){
 		$("#showAppId").hide();
 		$("#showSign").hide();
+	}else if($(this).val() == 3){
+		$("#showAppId").hide();
+		$("#showSign").show();
 	}else{
 		$("#showAppId").show();
 		$("#showSign").show();
@@ -714,21 +889,75 @@ $("select[name='sms_api']").change(function(){
 <div class="panel panel-primary">
 <div class="panel-heading"><h3 class="panel-title">计划任务列表</h3></div>
 <div class="panel-body">
-<p>以下网址每天0点定时访问一次即可，也可以设置1分钟一次的定时任务。</p>
-<p>订单统计任务</p>
+<p>订单统计任务（0点后访问一次即可）</p>
 <li class="list-group-item"><?php echo $siteurl?>cron.php?do=order&key=<?php echo $conf['cronkey']; ?></li>
 <br/>
-<p>自动生成结算任务</p>
+<p>自动生成结算任务（0点后访问一次即可）</p>
 <li class="list-group-item"><?php echo $siteurl?>cron.php?do=settle&key=<?php echo $conf['cronkey']; ?></li>
+<br/>
+<p>订单异步通知重试任务<br/>（如果有订单出现通知失败的，可以通过此条任务自动重新通知，通知重试时间：1分钟，3分钟，20分钟，1小时，2小时）</p>
+<li class="list-group-item"><?php echo $siteurl?>cron.php?do=notify&key=<?php echo $conf['cronkey']; ?></li>
 </div>
 </div>
 <?php
 }
-elseif($mod=='upimg'){
+elseif($mod=='proxy'){
+?>
+<div class="panel panel-primary">
+<div class="panel-heading"><h3 class="panel-title">中转代理设置</h3></div>
+<div class="panel-body">
+  <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">中转代理开关</label>
+	  <div class="col-sm-10"><select class="form-control" name="proxy" default="<?php echo $conf['proxy']?>">
+	  <option value="0">关闭</option>
+	  <option value="1">开启</option>
+	  </select></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">代理IP</label>
+	  <div class="col-sm-10"><input type="text" name="proxy_server" value="<?php echo $conf['proxy_server']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">代理端口</label>
+	  <div class="col-sm-10"><input type="text" name="proxy_port" value="<?php echo $conf['proxy_port']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">代理账号</label>
+	  <div class="col-sm-10"><input type="text" name="proxy_user" value="<?php echo $conf['proxy_user']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">代理密码</label>
+	  <div class="col-sm-10"><input type="text" name="proxy_pwd" value="<?php echo $conf['proxy_pwd']; ?>" class="form-control"/></div>
+	</div><br/>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">代理协议</label>
+	  <div class="col-sm-10"><select class="form-control" name="proxy_type" default="<?php echo $conf['proxy_type']; ?>">
+	  <option value="http">HTTP</option>
+	  <option value="https">HTTPS</option>
+	  <option value="sock4">SOCK4</option>
+	  <option value="sock5">SOCK5</option>
+	  </select></div>
+	</div><br/>
+	<div class="form-group">
+	  <div class="col-sm-offset-2 col-sm-10"><input type="submit" name="submit" value="修改" class="btn btn-primary btn-block"/><br/>
+	 </div>
+	</div>
+  </form>
+</div>
+<div class="panel-footer">
+<span class="glyphicon glyphicon-info-sign"></span>
+本功能开启后，在支付成功异步回调的时候，使用中转代理访问商户网站，可解决一些只能国内访问的网站回调问题，也可以防止本站服务器IP泄露。<br/>
+自定义代理可以使用Windows服务器+CCProxy软件搭建<br/>
+</div>
+</div>
+<?php
+}elseif($mod=='upimg'){
 echo '<div class="panel panel-primary">
 <div class="panel-heading"><h3 class="panel-title">更改首页LOGO</h3></div>
 <div class="panel-body">';
 if($_POST['s']==1){
+if(!checkRefererHost())exit;
 if(copy($_FILES['file']['tmp_name'], ROOT.'assets/img/logo.png')){
 	echo "成功上传文件!<br>（可能需要清空浏览器缓存才能看到效果，按Ctrl+F5即可一键刷新缓存）";
 }else{
@@ -741,7 +970,7 @@ echo '</div></div>';
 ?>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 var items = $("select[default]");
 for (i = 0; i < items.length; i++) {
@@ -823,6 +1052,5 @@ function changeTemplate(template){
 			return false;
 		}
 	});
-	return false;
 }
 </script>

@@ -13,14 +13,14 @@ if(!defined('IN_CRONLITE'))exit();
 	<meta name="keywords" content="<?php echo $conf['keywords']?>">
 	<meta name="description" content="<?php echo $conf['description']?>">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <link rel="stylesheet" type="text/css" href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo $cdnpublic?>OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/animations.min.css">
     <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/style.css">
     <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/responsive.css">
     <!--[if lt IE 9]>
-	  <script src="//cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
-	  <script src="//cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	  <script src="<?php echo $cdnpublic?>html5shiv/3.7.3/html5shiv.min.js"></script>
+	  <script src="<?php echo $cdnpublic?>respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
 	<style>.section {padding: 25px 0;color: #666666;}</style>
 </head>
@@ -131,13 +131,13 @@ if(!defined('IN_CRONLITE'))exit();
     <footer>
         <div class="container">
             <div class="copyright text-center">
-			<p style="font-style:oblique;font-size:14px;color:#FFF"><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved.<br/><?php echo $conf['footer']?></p>
+			<p style="font-style:oblique;font-size:14px;color:#FFF"><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;<?php echo date("Y")?>&nbsp;All Rights Reserved.<br/><?php echo $conf['footer']?></p>
             </div>
         </div>
     </footer>
 </div>
-<script type="text/javascript" src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js"></script>
-<script src="<?php echo STATIC_ROOT?>js/owl.carousel.min.js"></script>
+<script type="text/javascript" src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script src="<?php echo STATIC_ROOT?>js/main.js"></script>
 <script type="text/javascript">
     $(function () {

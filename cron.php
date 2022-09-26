@@ -26,6 +26,9 @@ if($_GET['do']=='settle'){
 		$allmoney=0;
 		while($row = $rs->fetch())
 		{
+			if($conf['cert_force']==1 && $row['cert']==0){
+				continue;
+			}
 			$i++;
 			if($conf['settle_rate']>0){
 				$fee=round($row['money']*$conf['settle_rate']/100,2);
@@ -54,6 +57,7 @@ elseif($_GET['do']=='order'){
 
 	$CACHE->clean();
 	$DB->exec("delete from pre_order where status=0 and addtime<'{$thtime}'");
+	$DB->exec("delete from pre_regcode where `time`<'".(time()-3600*24)."'");
 
 	$day = date("Ymd", strtotime("-1 day"));
 
@@ -97,12 +101,62 @@ elseif($_GET['do']=='order'){
 		$allmoney+=$money;
 	}
 
-	$order_lastday['all']=$allmoney;
+	$order_lastday['all']=round($allmoney,2);
 	$order_lastday['paytype']=$order_paytype;
 	$order_lastday['channel']=$order_channel;
 
 	$CACHE->save('order_'.$day, serialize($order_lastday));
 
 	saveSetting('order_time', $date);
+
+	$DB->exec("update pre_channel set daystatus=0");
 	exit($day.'订单统计与清理任务执行成功');
+}
+elseif($_GET['do']=='notify'){
+	$limit = 20; //每次重试的订单数量
+	for($i=0;$i<$limit;$i++){
+		$srow=$DB->getRow("SELECT * FROM pre_order WHERE (TO_DAYS(NOW()) - TO_DAYS(endtime) <= 1) AND notify>0 AND notifytime<NOW() LIMIT 1");
+		if(!$srow)break;
+
+		//通知时间：1分钟，3分钟，20分钟，1小时，2小时
+		$notify = $srow['notify'] + 1;
+		if($notify == 2){
+			$interval = '2 minute';
+		}elseif($notify == 3){
+			$interval = '16 minute';
+		}elseif($notify == 4){
+			$interval = '36 minute';
+		}elseif($notify == 5){
+			$interval = '1 hour';
+		}else{
+			$DB->exec("UPDATE pre_order SET notify=-1,notifytime=NULL WHERE trade_no='{$srow['trade_no']}'");
+			continue;
+		}
+		$DB->exec("UPDATE pre_order SET notify={$notify},notifytime=date_add(now(), interval {$interval}) WHERE trade_no='{$srow['trade_no']}'");
+
+		$url=creat_callback($srow);
+		if(do_notify($url['notify'])){
+			$DB->exec("UPDATE pre_order SET notify=0,notifytime=NULL WHERE trade_no='{$srow['trade_no']}'");
+			echo $srow['trade_no'].' 重新通知成功<br/>';
+		}else{
+			echo $srow['trade_no'].' 重新通知失败（第'.$notify.'次）<br/>';
+		}
+	}
+	echo 'ok!';
+}
+elseif($_GET['do']=='notify2'){
+	$limit = 20; //每次重试的订单数量
+	for($i=0;$i<$limit;$i++){
+		$srow=$DB->getRow("SELECT * FROM pre_order WHERE (TO_DAYS(NOW()) - TO_DAYS(endtime) <= 1) AND notify=-1 LIMIT 1");
+		if(!$srow)break;
+
+		$url=creat_callback($srow);
+		if(do_notify($url['notify'])){
+			$DB->exec("UPDATE pre_order SET notify=0,notifytime=NULL WHERE trade_no='{$srow['trade_no']}'");
+			echo $srow['trade_no'].' 重新通知成功<br/>';
+		}else{
+			echo $srow['trade_no'].' 重新通知失败<br/>';
+		}
+	}
+	echo 'ok!';
 }

@@ -50,8 +50,7 @@ class WxPayDataBase
 	**/
 	public function ToXml()
 	{
-		if(!is_array($this->values) 
-			|| count($this->values) <= 0)
+		if(!is_array($this->values) || count($this->values) <= 0)
 		{
     		throw new WxPayException("数组数据异常！");
     	}

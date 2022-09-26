@@ -2,431 +2,341 @@
 if(!defined('IN_CRONLITE'))exit();
 ?>
 <!DOCTYPE html>
-<html class="no-js" lang="zh" data-attr-t lang-t="lang">
+<html lang="zh-CN" class="no-js">
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-<meta name="renderer" content="webkit">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-<title><?php echo $conf['title'];?></title>
-<meta name="keywords" content="<?php echo $conf['keywords']?>">
-<meta name="description" content="<?php echo $conf['description']?>">
-<link rel="stylesheet" href="https://lib.haidism.cn/assets/index/css/ff1.css">
-<link rel="stylesheet" href="https://lib.haidism.cn/assets/index/css/public.css">
-<link rel="stylesheet" href="https://lib.haidism.cn/assets/index/css/jquery.zySlide.css" />
-<link rel="stylesheet" href="https://lib.haidism.cn/assets/index/css/font-awesome.css">
-<link rel="stylesheet" type="text/css" href="https://lib.haidism.cn/assets/index/css/index.css" />
-<style type="text/css">
-    @media screen and (-ms-high-contrast: active),
-    (-ms-high-contrast: none) {
-      .countdown-bg,
-      .hero-bg {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        -webkit-left: 0;
-        -o-left: 0;
-        top: 0px;
-        left: 0px;
-        -moz-overflow: hidden;
-        -webkit-overflow: hidden;
-        -o-overflow: hidden;
-
-      }
-      /* for IE10+ 此写法可以适配到高对比度和默认模式，故可覆盖所有ie10的模式 */
-      .hero-scene-intro {
-        top: -50px;
-        /*top: 180px\9\0;*/
-        left: 10%;
-      }
-    }
-
-    .txt {
-      font-size: 20px;
-    }
-
-    #iphone {
-      height: 327px;
-    }
-
-    .address img{width: 17px;float: left;display: inline-block !important;position: relative;top: 4px;margin-right: 10px;}
-    .address a img{width: 320px;height: 225px;margin: 30px 0 40px 0;}
-    /*.align-center{border-bottom: solid 1px #eee;}*/
-    .top-bar ul li a{color: #434343;}
-    </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><?php echo $conf['title']?></title>
+  <meta name="keywords" content="<?php echo $conf['keywords']?>" />
+  <meta name="description" content="<?php echo $conf['description']?>" />
+  <link rel="stylesheet" type="text/css" href="<?php echo $cdnpublic?>twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/magnific-popup.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/owl.theme.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/aos.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/mobiriseicons.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo $cdnpublic?>MaterialDesign-Webfont/1.9.33/css/materialdesignicons.min.css"/>
+  <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/as.css">
 </head>
-<body class="" style="min-width: 360px;">
-<div class="top-bar-wrapper">
-<div class="row align-center">
-<div class="title-bar show-for-small-only">
-<div class="title-bar-title">
-<a href="#" data-attr-t href-t="route.root" title="">
-<div class="top-bar__logo"></div>
-</a>
-</div>
-<a id="hamburger" class="title-bar__toggle" target="_blank" data-toggle>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-</a>
-</div>
-<div class="small-11 medium-10 large-10 hide-for-small-only">
-<div class="top-bar" style="margin:10px 0 0 10%\0;">
-<div class="top-bar-title">
-<a href="/" data-attr-t href-t="route.root">
-<div class="top-bar__logo" style="background: url(assets/img/logo.png) 0 no-repeat;"></div>
-</a>
-</div>
-<div class="top-bar-right">
-<ul class="dropdown menu" data-dropdown-menu>
-<div class="top-bar-left">
-<ul class="dropdown menu" data-dropdown-menu>
-<li class="is-dropdown-submenu-parent">
-<a href="#" data-t="top-nav.more" style="padding-right: 10px;">产品</a>
-<ul class="menu vertical">
-<li>
-<a href="#" data-t="top-nav.account">
-<img src="https://lib.haidism.cn/assets/index/img/account-system.svg" alt="">聚合服务
-</a>
-</li>
-<li>
-<a href="#" data-t="top-nav.platform">
-<img src="https://lib.haidism.cn/assets/index/img/aggregate-pay.svg" alt="">公司产品
-</a>
-</li>
-</ul>
-</li>
-<li>
-</li>
-<li>
-</li>
-</ul>
-</div>
-<li>
-<a href="doc.html" data-t="top-nav.devcenter">开发文档</a>
-</li>
-<li>
-</li>
-<li id="in">
-<a href="/user/" data-t="top-nav.login">登录</a>
-</li>
-<li style="">
-<a href="/user/reg.php" class="button cta hollow small" id="button_top" style="">注册</a>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="mobile-nav show-for-small-only" id="sidebar-menu">
-<ul>
-<li>
-<dl>
-<dt data-t="top-nav.features">
-<a>产品</a>
-</dt>
-<dd>
-<a href="#">-聚合服务</a>
-</dd>
-<dd>
-<a href="#">-公司产品</a>
-</dd>
-</dl>
-</li>
-<li>
-<a href="#">解决方案</a>
-</li>
-<li class="divider">
-<a href="#">Apple Pay</a>
-</li>
-<li>
-<a href="#" target="_blank" data-t="top-nav.help">帮助中心</a>
-</li>
-<li class="divider">
-<a href="#" data-t="top-nav.documentation">开发者中心</a>
-</li>
-<li>
-<a href="/user/" data-t="top-nav.login">登入</a>
-</li>
-<li class="divider">
-<a href="/user/reg.php" data-t="top-nav.signup">注册</a>
-</li>
-</ul>
-</div>
-<div class="ui-mask"></div>
-<section class="hero fullheight" style="background-color: rgba(255, 255, 255,1);">
-<div class="row align-center">
-<div class="small-12 medium-9 large-9 columns fullheight-column-align">
-<div class="row">
-<div class="small-12 medium-5 columns align-self-middle">
-<div class="hero-scene-intro">
-<h1 class="intro" data-t="index.hero.subheading"><?php echo $conf['sitename'];?></h1>
-<div class="viewport hide-for-small-only">
-<ul class="hero-scene-text">
-<li>
-<h4 class="title" data-t="index.hero.scene.app">
-在任何场景，
-<br>向任何人收款。
-</h4>
-</li>
-<li>
-<h4 class="title" data-t="index.hero.scene.transfer">
-向个人或企业
-<br>付款
-<span class="punctuation">、</span>发红包。
-</h4>
-</li>
-<li>
-<h4 class="title" data-t="index.hero.scene.offline">
-实现余额
-<span class="punctuation">、</span>优惠券
-<br>等服务功能。
-</h4>
-</li>
-<li>
-<h4 class="title" data-t="index.hero.scene.web">
-管理全平台
-<br>的交易和账务。
-</h4>
-</li>
-<li>
-<h4 class="title" data-t="index.hero.scene.app">
-在任何场景，
-<br>向任何人收款。
-</h4>
-</li>
-</ul>
-</div>
-<h1 class="title show-for-small-only" style="font-size: 20px;">
-是您体验这个世界的仪轨
-<br>让您感悟生活的轮廓和价值传递的方式
-</h1>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="hero-bg home">
-<div class="row align-right">
-<div class="small-12 medium-7 columns align-self-middle">
-<div class="line-box-wrap">
-<div class="line-box-viewport">
-<div class="line-boxes">
-<div class="box web"></div>
-<div class="box apple-pay"></div>
-<div class="box hongbao"></div>
-<div class="box web"></div>
-<div class="box apple-pay"></div>
-<div class="box hongbao"></div>
-<div class="box qr"></div>
-</div>
-<div class="scene-slider-wrap">
-<div class="iphone-hand-bg"></div>
-<div class="device-iphone6" id="iphone6">
-<div class="topbar">
-<span class="camera"></span>
-<span class="speaker-before"></span>
-<span class="speaker"></span>
-</div>
-<span class="home"></span>
-<div class="screen">
-<div class="scene-viewport">
-<div class="scene-viewes">
-<div class="scene apple-pay"></div>
-<div class="scene hongbao"></div>
-<div class="scene qr"></div>
-<div class="scene web"></div>
-<div class="scene apple-pay"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<div class="home-content">
-<section class="home-main-con">
-<div class="row align-center product-module">
-<div class="small-12 medium-10 large-10" style="margin-bottom: 0;border-top:solid 1px #eee ;">
-<div class="row align-center">
-<div class="small-12 medium-6 large-6 outer" id="product-c" style=" width: 100% !important; -ms-width: 100% !important;">
-<div class="product-module-item" style="margin-top: 88px;border-bottom: solid 1px #eee ;">
-<p class="txt">服务不止是一次简单的交易，服务不再是冰冷的数据和枯燥的报表</p>
-<div class="jiaoY">
-<div class="jiaoCl">
-<img src="https://lib.haidism.cn/assets/index/img/c-13.png" style="width: 65px;" />
-</div>
-<div class="jiaoCr">
-<h6>不介入资金流</h6>
-<p>龙宝只负责交易处理</p>
-<p>不参与资金清算</p>
-</div>
-</div>
-<div class="jiaoY">
-<div class="jiaoCl">
-<img src="https://lib.haidism.cn/assets/index/img/c-11.png" style="width: 65px;" />
-</div>
-<div class="jiaoCr">
-<h6>接入便利</h6>
-<p>全平台SKD让你最小化</p>
-<p>介入服务的时间与人力</p>
-</div>
-</div>
-<div class="jiaoY">
-<div class="jiaoCl">
-<img src="https://lib.haidism.cn/assets/index/img/c-15.png" style="width: 65px;" />
-</div>
-<div class="jiaoCr">
-<h6>安全保证</h6>
-<p>全地三中心容灾系统</p>
-<p>确保服务稳定</p>
-<p>最快完成交易</p>
-</div>
-</div>
-<div class="jiaoY">
-<div class="jiaoCl">
-<img src="https://lib.haidism.cn/assets/index/img/c-12.png" style="width: 65px;" />
-</div>
-<div class="jiaoCr">
-<h6>稳定可靠</h6>
-<p>所有数据的传输和存储</p>
-<p>符合金融级别的安全标准</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="row align-center" id="foorm_a">
-<div class="small-12 medium-6 large-6 outer" style="margin-bottom: 0; width: 100% !important;">
-<div class="product-module-item" style="border-radius:10px ; margin: 120px 0 100px 0;">
-<p class="txt" style="margin-bottom: 80px;">多级商户场景的服务解决方案，灵活实现多级商户的分润管理</p>
-<div class="jiaoYr">
-<div id="Slide1" class="zy-Slide" style="margin: 0; padding: 0 ">
-<ul style="margin: 0;height: 100%; margin: 0 auto;">
-<li>
-<img src="https://lib.haidism.cn/assets/index/img/2w_11.png" />
-</li>
-<li>
-<img src="https://lib.haidism.cn/assets/index/img/a_96.png" />
-</li>
-<img id="iphone6_img" src="https://lib.haidism.cn/assets/index/img/iphong8-4.png" />
-<li>
-<img src="https://lib.haidism.cn/assets/index/img/tou.png" />
-</li>
-<li>
-<img src="https://lib.haidism.cn/assets/index/img/km-2.png" />
-</li>
-</ul>
-</div>
-</div>
-<div class="jiaoYl">
-<h4>聚合平台</h4>
-<p>
-聚合多种主流服务方式，为商户提供完美解决方案， 一次对接，
-</p>
-<p>一个接单，一个平台解决所有服务问题</p>
-<p>
-<button class="button-c hollow button_f">解决办法</button>
-</p>
-</div>
-<div class="jiaoYl">
-<h4>管理平台</h4>
-<p>简单易用的管理平台，快速概览当日的交易状况</p>
-<p>财务负责人可以集中进行跨渠道的交易管理，查账对账，数据分析，输出报表</p>
-<p>开放多角色的职能权限设置，方便开发，运营和财务高效协作</p>
-<p>
-<button class="button-c hollow button_f">解决办法</button>
-</p>
-</div>
-<div class="jiaoYr" id="Yr">
-<img src="https://lib.haidism.cn/assets/index/img/kc4-13.png" id="kc_img" />
-<div id="Yr_box">
-<div id="Yr_"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<div id="trigger3" class="spacer s0"></div>
-</div>
-<footer style="background-color: rgb(246,248,248);padding-bottom: 0;">
-<ul class="row" id="roo" style="background-color: rgb(38,163,241);">
-<li class="large-2 medium-2 small-6 columns" style="width: 100% !important; display: inline-block;">
-<dl>
-<dt style="text-align: center;width: 100%; color: #FFFFFF;margin-top: 33px;">企业信赖的商业合作伙伴</dt>
-<dd href="#" style="text-align: center; font-weight: 400;color: #FFFFFF;">行业明星团队，顶级风险投资机构支持，历经 3 年积累打造专业的支付系统解决方案和基于交易数据的商业智能平台，历经 273 个版本。</dd>
-<dd href="#" style="text-align: center; font-weight: 400;color: #FFFFFF;">迭代升级，服务 70 多个行业近 2 万家企业客户，处理超过 5 亿笔订单。</dd>
-<dd href="#" style="text-align: center; font-weight: 400;color: #FFFFFF;"><?php echo $conf['sitename'];?> 累计为超过 25000 家商户提供服务</dd>
-</dl>
-</li>
-<div style="text-align: center; font-weight: 200; width: 100%;">
-<a href="/user/reg.php">
-<button id="buttonS" class="button_f">立即注册</button>
-</a>
-</div>
-</ul>
-<div class="beian row " style="background-color: rgb(255,255,255); margin: 0;padding-bottom: 30px;">
-<p class="large-6 medium-6 small-12 columns" style="text-align: center;margin: 0;font-weight: 200;letter-spacing: -1px;padding-top: 7px;width: 100%;">
-<?php echo $conf['footer']?>
-</p>
-<p class="large-6 medium-6 small-12 columns" style="text-align: center; margin: 0; font-weight: 200;letter-spacing: -1px; width: 100%;">
-<?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved. &nbsp;
-</p>
-</div>
-</footer>
-<div class="pro-consult">
-<a id="consult" href="javascript:void(0);" class="button cta">
-<img src="https://lib.haidism.cn/assets/index/img/Long4_33_03.png" />
-</a>
-</div>
-<div id="consultSlide" class="pro-slide">
-<div id="proCon" class="pro-con">
-<h3><?php echo $conf['sitename'];?></h3>
-<h4>掌握最新的行业解决方案</h4>
-<hr />
-<h3>联系我们</h3>
-<form data-abide novalidate id="contact" class="pro-form">
-<input type="hidden" id="source" name="source" value="widget">
-<div class="address">
-<p><img src="https://lib.haidism.cn/assets/index/img/qq.svg" alt="QQ" /> <a href="https://wpa.qq.com/msgrd?v=3&uin=<?php echo $conf['kfqq']?>&Site=pay&Menu=yes" target="_blank"><?php echo $conf['kfqq']?></a></p>
-<p><img src="https://lib.haidism.cn/assets/index/img/iphone.svg" alt="电话" /> 123456789</p>
-</div>
-<hr />
-<div class="">
-<p>邮箱: <a href="mailto:<?php echo $conf['email']?>"><?php echo $conf['email']?></a></p>
-</div>
-</form>
-</div>
-<div id="proSuccess" class="pro-con text-center" style="display: none;">
-<div class="pos-middle">
-<div class="pro-ico">
-<span class="pro-icon-success pro-draw"></span>
-</div>
-</div>
-</div>
-<div class="pro-close-outer">
-<p class="pro-tip">
-关注
-<strong>微信公众号</strong>
-<img src="https://lib.haidism/assets/index/img/qr-ping.png" alt=""> 获取即时资讯
-</p>
-<a class="pro-close">
-<i class="fa fa-arrow-right" aria-hidden="true" style="margin: 11px auto ;font-size: 25px;color: #909090;"></i>
-</a>
-</div>
-</div>
-<script src="https://lib.haidism.cn/assets/index/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://lib.haidism.cn/assets/index/js/jquery.zySlide.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://lib.haidism.cn/assets/index/js/index.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://lib.haidism.cn/assets/index/js/animation.js"></script>
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top custom_nav_menu sticky">
+    <div class="container">
+      <a class="navbar-brand logo" href=""><img class="header-logo-img" src="assets/img/logo.png" alt="<?php echo $conf['sitename']?>" /></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-as"
+      aria-controls="navbar-as" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="mdi mdi-menu"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar-as">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a href="#home" class="nav-link">主页</a>
+          </li>
+          <li class="nav-item">
+            <a href="#about" class="nav-link">接入</a>
+          </li>
+          <li class="nav-item">
+            <a href="#services" class="nav-link">服务</a>
+          </li>
+          <li class="nav-item">
+            <a href="#statistics" class="nav-link">统计</a>
+          </li>
+          <li class="nav-item">
+            <a href="#outlook" class="nav-link">展望</a>
+          </li>
+          <li class="nav-item">
+            <a href="./doc.html" class="nav-link">开发文档</a>
+          </li>
+          <li class="nav-item">
+            <a href="./agreement.html" class="nav-link">服务条款</a>
+          </li>
+		  <?php if($conf['test_open']){?><li class="nav-item"><a href="/user/test.php" class="nav-link">在线测试</a></li><?php }?>
+        </ul>
+        <a href="./user/" class="btn_outline btn btn_small text-capitalize btn_rounded navbar-btn">商户登录</a>
+      </div>
+    </div>
+  </nav>
+  <section class="bg_home_tech_soft full_height_100vh_home" id="home">
+    <div class="bg_overlay_cover_on"></div>
+    <div class="home_table_cell">
+      <div class="home_table_cell_center">
+        <div class="container position-relative up-index">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="mt-3">
+                <h1 class="home_title font-weight-normal text-white mx-auto text-capitalize mb-0"><?php echo $conf['sitename']?> - <span class="text-typed" data-elements="用支付响应世界 用支付创造未来！"></span></h1>
+                <div class="home_text_details">
+                  <p class="home_subtitle mt-4 mb-0"><font style="text-transform: uppercase;"><?php echo $_SERVER['HTTP_HOST']?></font> - 极速响应、安全可靠、方便快捷是我们最大的特点，轻松实现手机付款、在线付款，<?php echo $conf['sitename']?>是您的不二之选，欢迎咨询<?php echo $conf['sitename']?>。</p>
+                </div>
+                <div class="home_btn_manage mt-4 pt-3">
+                  <a href="./user/" class="btn btn_outline btn_rounded mr-3">商户中心</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="home_side_img mt-3">
+                <img src="<?php echo STATIC_ROOT?>images/info1.png" alt="首页" class="img-fluid mx-auto d-block"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section_all bg-light" id="about">
+    <div class="container">
+      <div class="row vertical_content_manage" data-aos="fade-up">
+        <div class="col-lg-6">
+          <div class="about_details mt-3">
+            <h3 class="text-capitalize mb-3">我们拥有比同行更优质的服务</h3>
+            <div class="section_title_border">
+            </div>
+            <p class="text_muted mt-3">您永远不会想象那么强大的创意业务可以轻松实现，<?php echo $conf['sitename']?>为您提供多种解决方案。</p>
+          </div>
+          <div class="row mt-3">
+            <div class="col-lg-6">
+              <div class="about_details_box bg-white p-4 mt-3">
+                <p class="text_muted mb-0">支持支付宝、微信、QQ钱包等主流支付渠道，让您拥有PC网页支付、扫码支付、移动HTML5支付。</p>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="about_details_box bg-white p-4 mt-3">
+                <p class="text_muted mb-0"><?php echo $conf['sitename']?>通过简单的页面配置，可以替代复杂繁琐的人工资金结算业务，提高业务实时性，降低错误。</p>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-lg-12">
+              <div class="mt-3">
+                <a href="./doc.html" class="btn btn_custom btn_rounded">开发文档</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="img_about mt-3">
+            <img src="<?php echo STATIC_ROOT?>images/info2.png" alt="接入" class="img-fluid mx-auto d-block">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bg_custom">
+    <div class="container">
+      <div class="row pt-5 pb-5" data-aos="fade-up">
+        <div class="col-lg-8 text-white small_cta_desc mt-3 mb-3">
+          <h4>那么，你下一步准备好了吗？ 赶紧加入我们吧</h4>
+        </div>
+        <div class="col-lg-4 mt-3 mb-3 text-md-right">
+          <a href="./user/reg.php" class="btn btn_outline">立即注册</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section_all" id="services">
+    <div class="container">
+      <div class="row vertical_content_manage" data-aos="fade-up">
+        <div class="col-lg-5">
+          <div class="services_img mt-3">
+            <img src="<?php echo STATIC_ROOT?>images/info3.png" alt="服务" class="img-fluid mx-auto d-block">
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="row mt-3">
+            <div class="col-lg-6">
+              <div class="services_boxes p-4 mt-3">
+                <div class="services_icon ">
+                  <i class="mbri-desktop text-white bg_first_service"></i>
+                </div>
+                <div class="services_desc mt-4">
+                  <h5 class="font-weight-bold">支付能力</h5>
+                  <p class="mt-3 text_muted mb-0">适用于商家在移动端网页应用中集成<?php echo $conf['sitename']?>的快捷支付功能 ，集成<?php echo $conf['sitename']?>提供的SDK，一键接入</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="services_boxes p-4 mt-3">
+                <div class="services_icon">
+                  <i class="mbri-features text-white bg_second_service"></i>
+                </div>
+                <div class="services_desc mt-4">
+                  <h5 class="font-weight-bold">金融科技</h5>
+                  <p class="mt-3 text_muted mb-0"><?php echo $conf['sitename']?>基于互联网，融合行业解决方案，驱动产业模式升级，创新应用场景</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-lg-6">
+              <div class="services_boxes p-4 mt-3">
+                <div class="services_icon">
+                  <i class="mbri-globe-2 text-white bg_third_service"></i>
+                </div>
+                <div class="services_desc mt-4">
+                  <h5 class="font-weight-bold">接口支持</h5>
+                  <p class="mt-3 text_muted mb-0">支付、分享、账户、营销、信用、服务窗等九大优质接口支持</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="services_boxes p-4 mt-3">
+                <div class="services_icon">
+                  <i class="mbri-photo text-white bg_four_service"></i>
+                </div>
+                <div class="services_desc mt-4">
+                  <h5 class="font-weight-bold">盈利模式</h5>
+                  <p class="mt-3 text_muted mb-0">基于商家服务市场，为合作伙伴的插件及服务提供变现渠道</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-lg-12">
+              <div class="mt-3">
+                <a href="./user/reg.php" class="btn btn_custom btn_rounded">加入我们</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section_all bg_custom" id="statistics">
+    <div class="container">
+      <div class="row vertical_content_manage" data-aos="fade-up">
+        <div class="col-lg-6">
+          <div class="features_box p-3 mt-3">
+            <div class="features_icon">
+              <i class="mbri-laptop text-white"></i>
+            </div>
+            <div class="features_details text-white">
+              <p class="text-white mb-0">商户总数：2789</p>
+            </div>
+          </div>
+          <div class="features_box p-3 mt-3">
+            <div class="features_icon">
+              <i class="mbri-touch-swipe text-white"></i>
+            </div>
+            <div class="features_details text-white">
+              <p class="text-white mb-0">订单总数：548156</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="features_box p-3 mt-3">
+            <div class="features_icon">
+              <i class="mbri-laptop text-white"></i>
+            </div>
+            <div class="features_details text-white">
+              <p class="text-white mb-0">商户结算总额：￥348511.89
+              </p>
+            </div>
+          </div>
+          <div class="features_box p-3 mt-3">
+            <div class="features_icon">
+              <i class="mbri-touch-swipe text-white"></i>
+            </div>
+            <div class="features_details text-white">
+              <p class="text-white mb-0">商户总计余额：￥65498.34
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section_all bg-light" id="outlook">
+    <div class="container">
+      <div class="row" data-aos="fade-up">
+        <div class="col-lg-12">
+          <div class="about_details mx-auto text-center mt-3">
+            <h3 class="text-capitalize mb-3">展望未来</h3>
+            <div class="section_title_border mx-auto">
+            </div>
+            <p class="text_muted mt-3">您永远不会想象那么强大的创意业务可以轻松实现，<?php echo $conf['sitename']?>为您提供多种解决方案。</p>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5" data-aos="fade-up">
+        <div class="col-lg-12">
+          <div id="owl-demo" class="owl-carousel owl-theme">
+            <div class="item testi_box mx-auto text-center">
+              <div class="testi_icon">
+                <i class="mbri-user text_custom"></i>
+              </div>
+              <p class="review_box">"人生的磨难是很多的，所以我们不可对于每一件轻微的伤害都过于敏感。在生活磨难面前，精神上的坚强和无动于衷是我们抵抗罪恶和人生意外的最好武器。"</p>
+              <p class="client_name text-center mb-0 mt-4 font-weight-bold">- 《<?php echo $conf['sitename']?>》创始人</p>
+            </div>
+            <div class="item testi_box mx-auto text-center">
+              <div class="testi_icon">
+                <i class="mbri-user2 text_custom"></i>
+              </div>
+              <p class="review_box">"人生必有风险，所以引人入胜亦在于此。"</p>
+              <p class="client_name text-center mb-0 mt-4 font-weight-bold">- 《<?php echo $conf['sitename']?>》产品经理</p>
+            </div>
+            <div class="item testi_box mx-auto text-center">
+              <div class="testi_icon">
+                <i class="mbri-github text_custom"></i>
+              </div>
+              <p class="review_box">"当你看到不可理解的现象，感到迷惑时，真理可能已经披着面纱悄悄地站在你的面前。"</p>
+              <p class="client_name text-center mb-0 mt-4 font-weight-bold">- LY易支付</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="section_all pb-0 footer_detail footer_background">
+    <div class="container">
+      <div class="row" data-aos="fade-up">
+        <div class="col-lg-4">
+          <h6 class="text-white text-capitalize">关于我们</h6>
+          <p class="mt-3 text-white ">E-mail : <?php echo $conf['email']?></p>
+          <p class="text-white">客服QQ : <a href="https://wpa.qq.com/msgrd?v=3&uin=<?php echo $conf['kfqq']?>&site=pay&menu=yes" title="点击联系客服QQ" target="_blank"><?php echo $conf['kfqq']?></a></p>
+          <p class="mb-0 mt-3 text-white">本站域名 : <?php echo $_SERVER['HTTP_HOST']?></p>
+        </div>
+        <div class="col-lg-4">
+          <h6 class="text-white text-capitalize">本站相关</h6>
+          <ul class="list-unstyled footer_menu_list mt-3">
+            <li>
+              <a href="./agreement.html">服务条款</a>
+            </li>
+            <li>
+              <a href="./doc.html">开发文档</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h6 class="text-white text-capitalize">合作伙伴</h6>
+          <ul class="list-unstyled footer_menu_list mt-3">
+            <li>
+              <a href="<?php echo $conf['hzlink1'];?>"><?php echo $conf['hzhb1'];?></a>
+            </li>
+            <li>
+              <a href="<?php echo $conf['hzlink2'];?>"><?php echo $conf['hzhb2'];?></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="fot_bor"></div>
+      <div class="row pt-3 pb-3">
+        <div class="col-lg-6">
+          <div class=" text-left">
+            <p class="text-white mb-0"><?php echo date("Y")?> &copy; <a href=""><?php echo $conf['sitename']?></a></p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class=" text-right">
+            <p class="text-white mb-0"><?php echo $conf['footer']?></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
+  <script src="<?php echo $cdnpublic?>twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="<?php echo STATIC_ROOT?>js/owl.carousel.min.js"></script>
+  <script src="<?php echo STATIC_ROOT?>js/aos.js"></script>
+  <script src="<?php echo STATIC_ROOT?>js/typed.js"></script>
+  <script src="<?php echo STATIC_ROOT?>js/particles.js"></script>
+  <script src="<?php echo STATIC_ROOT?>js/particles.app.js"></script>
+  <script>AOS.init({easing:'ease-in-out-sine',duration:1000});$(".text-typed").each(function(){var $this=$(this);$this.typed({strings:$this.attr('data-elements').split(','),typeSpeed:100,backDelay:3000})});</script>
 </body>
 </html>

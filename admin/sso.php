@@ -6,7 +6,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
 $uid=intval($_GET['uid']);
 
 $userrow=$DB->getRow("select * from pre_user where uid='$uid' limit 1");
-if(!$userrow)sysmsg('当前用户不存在！');
+if(!$userrow)sysmsg('褰撳墠鐢ㄦ埛涓嶅瓨鍦紒');
 
 $session=md5($uid.$userrow['key'].$password_hash);
 $expiretime=time()+604800;

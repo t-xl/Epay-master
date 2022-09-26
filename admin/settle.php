@@ -26,7 +26,7 @@ $offset=$pagesize*($page - 1);
 $rs=$DB->query("SELECT * FROM pre_batch order by time desc limit $offset,$pagesize");
 while($res = $rs->fetch())
 {
-echo '<tr><td><b>'.$res['batch'].'</b></td><td>'.$res['allmoney'].'</td><td>'.$res['count'].'</td><td>'.$res['time'].'</td><td><a href="./slist.php?batch='.$res['batch'].'" class="btn btn-xs btn-info">结算列表</a>&nbsp;<a href="./download.php?batch='.$res['batch'].'&allmoney='.$res['allmoney'].'" class="btn btn-xs btn-warning">下载CSV</a>&nbsp;<a href="javascript:transfer(\''.$res['batch'].'\')" class="btn btn-xs btn-success">批量转账</a>&nbsp;<a href="javascript:completeBatch(\''.$res['batch'].'\')" class="btn btn-xs btn-primary">改为完成</a></td></tr>';
+echo '<tr><td><b>'.$res['batch'].'</b></td><td>'.$res['allmoney'].'</td><td>'.$res['count'].'</td><td>'.$res['time'].'</td><td><a href="./slist.php?batch='.$res['batch'].'" class="btn btn-xs btn-info">结算列表</a>&nbsp;<a href="javascript:download_csv(\''.$res['batch'].'\')" class="btn btn-xs btn-warning">下载CSV</a>&nbsp;<a href="javascript:transfer(\''.$res['batch'].'\')" class="btn btn-xs btn-success">批量转账</a>&nbsp;<a href="javascript:completeBatch(\''.$res['batch'].'\')" class="btn btn-xs btn-primary">改为完成</a></td></tr>';
 }
 ?>
 		  </tbody>
@@ -69,7 +69,7 @@ echo'</ul></div>';
       </div>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function createBatch(){
 	var confirmobj = layer.confirm('你确定要生成结算批次吗？', {
@@ -78,7 +78,7 @@ function createBatch(){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=create_batch',
+		url : 'ajax_settle.php?act=create_batch',
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -105,24 +105,26 @@ function createBatch(){
 function transfer(batch){
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=paypwd_check',
+		url : 'ajax_settle.php?act=paypwd_check',
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){
 				var paymsg = '';
-				paymsg+='<a class="btn btn-default btn-block" href="transfer_alipay.php?batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/alipay.ico" class="logo">支付宝接口转账</a>';
-				paymsg+='<a class="btn btn-default btn-block" href="transfer_wx.php?batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/wechat.ico" class="logo">微信企业付款</a>';
-				paymsg+='<a class="btn btn-default btn-block" href="transfer_qq.php?batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/qqpay.ico" class="logo">QQ钱包企业付款</a>';
+				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=1&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/alipay.ico" class="logo">支付宝批量转账</a>';
+				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=2&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/wxpay.ico" class="logo">微信批量转账</a>';
+				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=3&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/qqpay.ico" class="logo">QQ钱包批量转账</a>';
+				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=4&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/bank.ico" class="logo">银行卡批量转账</a>';
 				layer.alert('<center>'+paymsg+'<hr><a class="btn btn-default btn-block" onclick="layer.closeAll()">关闭</a></center>',{
 					btn:[],
 					title:'请选择批量转账方式',
-					closeBtn: false
+					closeBtn: false,
+					shadeClose: true
 				});
 			}else{
 				layer.prompt({title: '请输入支付密码', value: '', formType: 1}, function(text, index){
 					$.ajax({
 						type : 'POST',
-						url : 'ajax.php?act=paypwd_input',
+						url : 'ajax_settle.php?act=paypwd_input',
 						data : {paypwd:text},
 						dataType : 'json',
 						success : function(data) {
@@ -153,7 +155,7 @@ function completeBatch(batch){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=complete_batch',
+		url : 'ajax_settle.php?act=complete_batch',
 		data : {batch: batch},
 		dataType : 'json',
 		success : function(data) {
@@ -174,6 +176,17 @@ function completeBatch(batch){
 	});
 	}, function(){
 	  layer.close(confirmobj);
+	});
+}
+function download_csv(batch){
+	var paymsg = '';
+	paymsg+='<a class="btn btn-default btn-block" href="download.php?batch='+batch+'" style="margin-top:10px;">通用结算信息表格</a>';
+	paymsg+='<a class="btn btn-default btn-block" href="download.php?type=alipay&batch='+batch+'" style="margin-top:10px;">支付宝批量付款表格</a>';
+	layer.alert('<center>'+paymsg+'<hr><a class="btn btn-default btn-block" onclick="layer.closeAll()">关闭</a></center>',{
+		btn:[],
+		title:'请选择CSV表格模板',
+		closeBtn: false,
+		shadeClose: true
 	});
 }
 </script>

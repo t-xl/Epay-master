@@ -13,6 +13,12 @@ require_once PAY_ROOT."inc/WxPay.Data.php";
 class WxPayApi
 {
 	/**
+	 * SDK版本号
+	 * @var string
+	 */
+	public static $VERSION = "3.0.10";
+
+	/**
 	 * 
 	 * 统一下单，WxPayUnifiedOrder中out_trade_no、body、total_fee、trade_type必填
 	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
@@ -39,18 +45,18 @@ class WxPayApi
 		if($inputObj->GetTrade_type() == "JSAPI" && !$inputObj->IsOpenidSet()){
 			throw new WxPayException("统一支付接口中，缺少必填参数openid！trade_type为JSAPI时，openid为必填参数！");
 		}
-		if($inputObj->GetTrade_type() == "JSAPI" && !$inputObj->IsProduct_idSet()){
-			throw new WxPayException("统一支付接口中，缺少必填参数product_id！trade_type为JSAPI时，product_id为必填参数！");
+		if($inputObj->GetTrade_type() == "NATIVE" && !$inputObj->IsProduct_idSet()){
+			throw new WxPayException("统一支付接口中，缺少必填参数product_id！trade_type为NATIVE时，product_id为必填参数！");
 		}
 		
 		//异步通知url未设置，则使用配置文件中的url
-		if(!$inputObj->IsNotify_urlSet()){
+		if(!$inputObj->IsNotify_urlSet() && $config->GetNotifyUrl() != ""){
 			$inputObj->SetNotify_url(WxPayConfig::NOTIFY_URL);//异步通知url
 		}
 		
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -84,7 +90,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -117,7 +123,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -159,7 +165,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -197,7 +203,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -229,7 +235,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -269,7 +275,7 @@ class WxPayApi
 		$inputObj->SetSpbill_create_ip($_SERVER['REMOTE_ADDR']);//终端ip
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -302,7 +308,7 @@ class WxPayApi
 		
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -344,7 +350,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetNonce_str(self::getNonceStr());//随机字符串
 		
@@ -383,7 +389,7 @@ class WxPayApi
 		}
 		$inputObj->SetAppid(WxPayConfig::APPID);//公众账号ID
 		$inputObj->SetMch_id(WxPayConfig::MCHID);//商户号
-		$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
+		//$inputObj->SetSubAppid(WxPayConfig::SUB_APPID);//子商户公众账号ID
 		$inputObj->SetSubMch_id(WxPayConfig::SUB_MCHID);//子商户号
 		$inputObj->SetUser_ip($_SERVER['REMOTE_ADDR']);//终端ip
 		$inputObj->SetTime(date("YmdHis"));//商户上报时间	 
@@ -466,7 +472,12 @@ class WxPayApi
 	public static function notify($callback, &$msg)
 	{
 		//获取通知的数据
-		$xml = file_get_contents("php://input");
+		$xml = isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : file_get_contents("php://input");
+		if (empty($xml)) {
+			# 如果没有数据，直接返回失败
+			return false;
+		}
+
 		//如果返回成功则验证签名
 		try {
 			$result = WxPayResults::Init($xml);
@@ -579,6 +590,10 @@ class WxPayApi
 	private static function postXmlCurl($xml, $url, $useCert = false, $second = 30)
 	{		
 		$ch = curl_init();
+		$curlVersion = curl_version();
+		$ua = "WXPaySDK/".self::$VERSION." (".PHP_OS.") PHP/".PHP_VERSION." CURL/".$curlVersion['version']." "
+		.WxPayConfig::MCHID;
+
 		//设置超时
 		curl_setopt($ch, CURLOPT_TIMEOUT, $second);
 		
@@ -591,6 +606,7 @@ class WxPayApi
 		curl_setopt($ch,CURLOPT_URL, $url);
 		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,FALSE);
 		curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,FALSE);
+		curl_setopt($ch,CURLOPT_USERAGENT, $ua); 
 		//设置header
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		//要求结果为字符串且输出到屏幕上

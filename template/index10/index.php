@@ -1,3 +1,6 @@
+<?php
+if(!defined('IN_CRONLITE'))exit();
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -8,13 +11,13 @@
 	<meta name="keywords" content="<?php echo $conf['keywords']?>">
 	<meta name="description" content="<?php echo $conf['description']?>">
 		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/default.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/animate.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo $cdnpublic?>animate.css/3.7.2/animate.min.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/aos.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/header_common.css"/>
 		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/index_main.css"/>
 		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/common_contact.css"/>
 		<link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/media.css" />
-		<script src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js"></script>
+		<script src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
 		<script src="<?php echo STATIC_ROOT?>js/aos.js"></script>
 		<script src="<?php echo STATIC_ROOT?>js/xs.js"></script>
 		<script src="<?php echo STATIC_ROOT?>js/common_js.js"></script>
@@ -273,7 +276,7 @@
 						<div class="footer_topLeftCon pingFang">
 							<a href="#">禁售商品</a>
 							<a href="#">隐私协议</a>
-							<a href="#">注册协议</a>
+							<a href="agreement.html">注册协议</a>
 						</div>
 					</li>
 					<li class="left">
@@ -296,7 +299,8 @@
 					<div></div>
 				</div>
 			</div>
-			<div class="footer_bottom pingFang"> Copyright © 2016-2020 <?php echo $conf['sitename']?> All rights reserved. 版权所有
+			<div class="footer_bottom pingFang"> Copyright © <?php echo date("Y")?> <?php echo $conf['sitename']?> All rights reserved. 版权所有
+			<p><?php echo $conf['footer']?></p>
 <!-- wpa start -->  
 
 </div>

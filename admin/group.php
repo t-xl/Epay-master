@@ -56,13 +56,13 @@ echo '<tr><td><b>'.$res['gid'].'</b></td><td>'.$res['name'].'</td><td><a class="
 	</div>
   </div>
 </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function saveAll(){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=saveGroupPrice',
+		url : 'ajax_user.php?act=saveGroupPrice',
 		data : $("#glist").serialize(),
 		dataType : 'json',
 		success : function(data) {
@@ -87,7 +87,7 @@ function saveAll(){
 function setItem(id,status) {
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=saveGroup',
+		url : 'ajax_user.php?act=saveGroup',
 		data : {action:'changebuy', gid:id, status:status},
 		dataType : 'json',
 		success : function(data) {
@@ -125,9 +125,7 @@ function changeSetting(value){
 		},
 		error:function(data){
 			layer.msg('服务器错误');
-			return false;
 		}
 	});
-	return false;
 }
 </script>

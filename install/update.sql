@@ -13,12 +13,11 @@ INSERT INTO `pay_config` VALUES ('version', '2001');
 INSERT INTO `pay_config` VALUES ('admin_user', 'admin');
 INSERT INTO `pay_config` VALUES ('admin_pwd', '123456');
 INSERT INTO `pay_config` VALUES ('admin_paypwd', '123456');
-INSERT INTO `pay_config` VALUES ('homepage', '1');
 INSERT INTO `pay_config` VALUES ('sitename', '彩虹易支付');
 INSERT INTO `pay_config` VALUES ('title', '彩虹易支付 - 行业领先的免签约支付平台');
 INSERT INTO `pay_config` VALUES ('keywords', '彩虹易支付,支付宝免签约即时到账,财付通免签约,微信免签约支付,QQ钱包免签约,免签约支付');
-INSERT INTO `pay_config` VALUES ('description', '彩虹易支付是郑州追梦网络科技有限公司旗下的免签约支付产品，完美解决支付难题，一站式接入支付宝，微信，财付通，QQ钱包,微信wap，帮助开发者快速集成到自己相应产品，效率高，见效快，费率低！');
-INSERT INTO `pay_config` VALUES ('orgname', '郑州追梦网络科技有限公司');
+INSERT INTO `pay_config` VALUES ('description', '彩虹易支付是XX公司旗下的免签约支付产品，完美解决支付难题，一站式接入支付宝，微信，财付通，QQ钱包,微信wap，帮助开发者快速集成到自己相应产品，效率高，见效快，费率低！');
+INSERT INTO `pay_config` VALUES ('orgname', 'XX公司');
 INSERT INTO `pay_config` VALUES ('kfqq', '123456789');
 INSERT INTO `pay_config` VALUES ('template', 'index1');
 INSERT INTO `pay_config` VALUES ('pay_maxmoney', '1000');
@@ -101,6 +100,7 @@ INSERT INTO `pay_type` VALUES (2, 'wxpay', 0, '微信支付', 1);
 INSERT INTO `pay_type` VALUES (3, 'qqpay', 0, 'QQ钱包', 1);
 INSERT INTO `pay_type` VALUES (4, 'bank', 0, '网银支付', 0);
 INSERT INTO `pre_type` VALUES (5, 'jdpay', 0, '京东支付', 0);
+INSERT INTO `pre_type` VALUES (6, 'paypal', 0, 'PayPal', 0);
 
 DROP TABLE IF EXISTS `pay_plugin`;
 CREATE TABLE `pay_plugin` (
@@ -114,20 +114,10 @@ CREATE TABLE `pay_plugin` (
  PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `pay_plugin` (`name`, `showname`, `author`, `link`, `types`, `inputs`, `select`) VALUES
-('aliold', '支付宝旧版接口', '支付宝', 'https://b.alipay.com/signing/productSetV2.htm', 'alipay', 'appid:合作者身份(PID),appkey:安全校验码(Key)', '1:电脑网站支付,2:手机网站支付'),
-('alipay', '支付宝官方支付', '支付宝', 'https://b.alipay.com/signing/productSetV2.htm', 'alipay', 'appid:应用APPID,appkey:支付宝公钥(RSA2),appsecret:商户私钥(RSA2)', '1:电脑网站支付,2:手机网站支付,3:当面付扫码,4:JS支付'),
-('epay', '彩虹易支付', '彩虹', 'http://blog.cccyun.cc/', 'alipay,qqpay,wxpay,bank', 'appurl:接口地址,appid:商户ID,appkey:商户密钥', ''),
-('jdpay', '京东支付', '京东', 'https://www.jdpay.com/', 'jdpay', 'appid:商户号,appkey:商户DES密钥', ''),
-('micro', '小微支付', '小微支付', 'http://blog.cccyun.cc/', 'alipay,wxpay', 'appurl:接口地址,appid:APPID,appkey:APPKEY,appmchid:商户号MCHID', ''),
-('qqpay', 'QQ钱包官方支付', 'QQ钱包', 'https://qpay.qq.com/', 'qqpay', 'appid:QQ钱包商户号,appkey:QQ钱包API密钥', '1:扫码支付(包含H5),2:公众号支付'),
-('swiftpass', '威富通', '威富通', 'https://www.swiftpass.cn/', 'alipay,wxpay,qqpay,bank,jdpay', 'appid:商户号,appkey:RSA平台公钥,appsecret:RSA应用私钥', '1.手机微信使用公众号支付,1.手机微信使用H5支付'),
-('wxpay', '微信官方支付', '微信', 'https://pay.weixin.qq.com/', 'wxpay', 'appid:公众号APPID,appmchid:商户号,appkey:商户支付密钥,appsecret:公众号SECRET', '1:扫码支付,2:公众号支付,3:H5支付'),
-('wxpaysl', '微信官方支付服务商版', '微信', 'https://pay.weixin.qq.com/partner/public/home', 'wxpay', 'appid:公众号APPID,appmchid:商户号,appkey:商户支付密钥,appsecret:公众号SECRET,appurl:子商户号', '1:扫码支付,2:公众号支付,3:H5支付');
-
 DROP TABLE IF EXISTS `pay_channel`;
 CREATE TABLE `pay_channel` (
   `id` int(11) unsigned NOT NULL auto_increment,
+  `mode` int(1) DEFAULT 0,
   `type` int(11) unsigned NOT NULL,
   `plugin` varchar(30) NOT NULL,
   `name` varchar(30) NOT NULL,
@@ -139,6 +129,8 @@ CREATE TABLE `pay_channel` (
   `appurl` varchar(255) DEFAULT NULL,
   `appmchid` varchar(255) DEFAULT NULL,
   `apptype` varchar(50) DEFAULT NULL,
+  `daytop` int(10) DEFAULT 0,
+  `daystatus` int(1) DEFAULT 0,
  PRIMARY KEY (`id`),
  KEY type (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

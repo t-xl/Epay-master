@@ -2,7 +2,7 @@
 
 include("../includes/common.php");
 
-if($conf['reg_open']==0)sysmsg('未开放商户申请');
+//if($conf['reg_open']==0)sysmsg('未开放商户申请');
 
 $csrf_token = md5(mt_rand(0,999).time());
 $_SESSION['csrf_token'] = $csrf_token;
@@ -13,10 +13,10 @@ $_SESSION['csrf_token'] = $csrf_token;
 <meta charset="utf-8" />
 <title>找回密码 | <?php echo $conf['sitename']?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/animate.css/3.5.2/animate.min.css" type="text/css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>animate.css/3.5.2/animate.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
 <link rel="stylesheet" href="./assets/css/font.css" type="text/css" />
 <link rel="stylesheet" href="./assets/css/app.css" type="text/css" />
 <style>input:-webkit-autofill{-webkit-box-shadow:0 0 0px 1000px white inset;-webkit-text-fill-color:#333;}img.logo{width:14px;height:14px;margin:0 5px 0 3px;}</style>
@@ -60,15 +60,15 @@ $_SESSION['csrf_token'] = $csrf_token;
 </div>
 <div class="text-center">
 <p>
-<small class="text-muted"><a href="/"><?php echo $conf['sitename']?></a><br>&copy; 2016~2020</small>
+<small class="text-muted"><a href="/"><?php echo $conf['sitename']?></a><br>&copy; 2016~<?php echo date("Y")?></small>
 </p>
 </div>
 </div>
 </div>
-<script src="//cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
-<script src="//cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="../assets/layer/layer.js"></script>
-<script src="../assets/js/jquery-qrcode.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <script src="//static.geetest.com/static/tools/gt.js"></script>
 <script>
 function invokeSettime(obj){

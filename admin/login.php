@@ -27,12 +27,13 @@ if(isset($_POST['user']) && isset($_POST['pass'])){
 		setcookie("admin_token", $token, time() + 604800);
 		@header('Content-Type: text/html; charset=UTF-8');
 		exit("<script language='javascript'>alert('登陆管理中心成功！');window.location.href='./';</script>");
-	}elseif ($pass != $conf['admin_pwd']) {
+	}else {
 		$_SESSION['pass_error']++;
 		@header('Content-Type: text/html; charset=UTF-8');
 		exit("<script language='javascript'>alert('用户名或密码不正确！');history.go(-1);</script>");
 	}
 }elseif(isset($_GET['logout'])){
+	if(!checkRefererHost())exit();
 	setcookie("admin_token", "", time() - 604800);
 	@header('Content-Type: text/html; charset=UTF-8');
 	exit("<script language='javascript'>alert('您已成功注销本次登陆！');window.location.href='./login.php';</script>");
@@ -86,7 +87,7 @@ include './head.php';
 			</div><br/>
 			<?php }?>
             <div class="form-group">
-              <div class="col-xs-12"><input type="submit" value="登陆" class="btn btn-primary form-control input-lg"/></div>
+              <div class="col-xs-12"><input type="submit" value="登陆" class="btn btn-primary btn-block btn-lg"/></div>
             </div>
           </form>
         </div>

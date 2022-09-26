@@ -4,39 +4,39 @@ namespace lib;
 class PayUtils {
 
 	/**
-	 * °ÑÊı×éËùÓĞÔªËØ£¬°´ÕÕ¡°²ÎÊı=²ÎÊıÖµ¡±µÄÄ£Ê½ÓÃ¡°&¡±×Ö·ûÆ´½Ó³É×Ö·û´®
-	 * @param $para ĞèÒªÆ´½ÓµÄÊı×é
-	 * return Æ´½ÓÍê³ÉÒÔºóµÄ×Ö·û´®
+	 * æŠŠæ•°ç»„æ‰€æœ‰å…ƒç´ ï¼ŒæŒ‰ç…§â€œå‚æ•°=å‚æ•°å€¼â€çš„æ¨¡å¼ç”¨â€œ&â€å­—ç¬¦æ‹¼æ¥æˆå­—ç¬¦ä¸²
+	 * @param $para éœ€è¦æ‹¼æ¥çš„æ•°ç»„
+	 * return æ‹¼æ¥å®Œæˆä»¥åçš„å­—ç¬¦ä¸²
 	 */
 	static public function createLinkstring($para) {
 		$arg  = "";
 		foreach ($para as $key=>$val) {
 			$arg.=$key."=".$val."&";
 		}
-		//È¥µô×îºóÒ»¸ö&×Ö·û
+		//å»æ‰æœ€åä¸€ä¸ª&å­—ç¬¦
 		$arg = substr($arg,0,-1);
 
 		return $arg;
 	}
 	/**
-	 * °ÑÊı×éËùÓĞÔªËØ£¬°´ÕÕ¡°²ÎÊı=²ÎÊıÖµ¡±µÄÄ£Ê½ÓÃ¡°&¡±×Ö·ûÆ´½Ó³É×Ö·û´®£¬²¢¶Ô×Ö·û´®×öurlencode±àÂë
-	 * @param $para ĞèÒªÆ´½ÓµÄÊı×é
-	 * return Æ´½ÓÍê³ÉÒÔºóµÄ×Ö·û´®
+	 * æŠŠæ•°ç»„æ‰€æœ‰å…ƒç´ ï¼ŒæŒ‰ç…§â€œå‚æ•°=å‚æ•°å€¼â€çš„æ¨¡å¼ç”¨â€œ&â€å­—ç¬¦æ‹¼æ¥æˆå­—ç¬¦ä¸²ï¼Œå¹¶å¯¹å­—ç¬¦ä¸²åšurlencodeç¼–ç 
+	 * @param $para éœ€è¦æ‹¼æ¥çš„æ•°ç»„
+	 * return æ‹¼æ¥å®Œæˆä»¥åçš„å­—ç¬¦ä¸²
 	 */
 	static public function createLinkstringUrlencode($para) {
 		$arg  = "";
 		foreach ($para as $key=>$val) {
 			$arg.=$key."=".urlencode($val)."&";
 		}
-		//È¥µô×îºóÒ»¸ö&×Ö·û
+		//å»æ‰æœ€åä¸€ä¸ª&å­—ç¬¦
 		$arg = substr($arg,0,-1);
 
 		return $arg;
 	}
 	/**
-	 * ³ıÈ¥Êı×éÖĞµÄ¿ÕÖµºÍÇ©Ãû²ÎÊı
-	 * @param $para Ç©Ãû²ÎÊı×é
-	 * return È¥µô¿ÕÖµÓëÇ©Ãû²ÎÊıºóµÄĞÂÇ©Ãû²ÎÊı×é
+	 * é™¤å»æ•°ç»„ä¸­çš„ç©ºå€¼å’Œç­¾åå‚æ•°
+	 * @param $para ç­¾åå‚æ•°ç»„
+	 * return å»æ‰ç©ºå€¼ä¸ç­¾åå‚æ•°åçš„æ–°ç­¾åå‚æ•°ç»„
 	 */
 	static public function paraFilter($para) {
 		$para_filter = array();
@@ -47,9 +47,9 @@ class PayUtils {
 		return $para_filter;
 	}
 	/**
-	 * ¶ÔÊı×éÅÅĞò
-	 * @param $para ÅÅĞòÇ°µÄÊı×é
-	 * return ÅÅĞòºóµÄÊı×é
+	 * å¯¹æ•°ç»„æ’åº
+	 * @param $para æ’åºå‰çš„æ•°ç»„
+	 * return æ’åºåçš„æ•°ç»„
 	 */
 	static public function argSort($para) {
 		ksort($para);
@@ -57,10 +57,10 @@ class PayUtils {
 		return $para;
 	}
 	/**
-	 * Ç©Ãû×Ö·û´®
-	 * @param $prestr ĞèÒªÇ©ÃûµÄ×Ö·û´®
-	 * @param $key Ë½Ô¿
-	 * return Ç©Ãû½á¹û
+	 * ç­¾åå­—ç¬¦ä¸²
+	 * @param $prestr éœ€è¦ç­¾åçš„å­—ç¬¦ä¸²
+	 * @param $key ç§é’¥
+	 * return ç­¾åç»“æœ
 	 */
 	static public function md5Sign($prestr, $key) {
 		$prestr = $prestr . $key;
@@ -68,11 +68,11 @@ class PayUtils {
 	}
 
 	/**
-	 * ÑéÖ¤Ç©Ãû
-	 * @param $prestr ĞèÒªÇ©ÃûµÄ×Ö·û´®
-	 * @param $sign Ç©Ãû½á¹û
-	 * @param $key Ë½Ô¿
-	 * return Ç©Ãû½á¹û
+	 * éªŒè¯ç­¾å
+	 * @param $prestr éœ€è¦ç­¾åçš„å­—ç¬¦ä¸²
+	 * @param $sign ç­¾åç»“æœ
+	 * @param $key ç§é’¥
+	 * return ç­¾åç»“æœ
 	 */
 	static public function md5Verify($prestr, $sign, $key) {
 		$prestr = $prestr . $key;

@@ -5,23 +5,21 @@ if(isset($_GET['sid'])){
 	$sid = trim(daddslashes($_GET['sid']));
 	if(!preg_match('/^(.[a-zA-Z0-9]+)$/',$sid))exit("Access Denied");
 	session_id($sid);
+	session_start();
 }
-session_start();
 
 @header('Content-Type: text/html; charset=UTF-8');
 
-if(!$conf['login_wx'])sysmsg("未开启微信快捷登录");
-$channel = \lib\Channel::get($conf['login_wx']);
-if(!$channel)exit('{"code":-1,"msg":"当前支付通道信息不存在"}');
-define("PAY_ROOT", PLUGIN_ROOT.'wxpay/');
+if(!$conf['transfer_wxpay'])sysmsg("未开启微信企业付款");
+$channel = \lib\Channel::get($conf['transfer_wxpay']);
+if(!$channel)showmsg('当前支付通道信息不存在');
+$wxinfo = \lib\Channel::getWeixin($channel['appwxmp']);
+if(!$wxinfo)showmsg('支付通道绑定的微信公众号不存在');
 
-require_once PAY_ROOT."inc/WxPay.Api.php";
-require_once PAY_ROOT."inc/WxPay.JsApiPay.php";
-
-$tools = new JsApiPay();
+$tools = new \lib\wechat\JsApiPay($wxinfo['appid'], $wxinfo['appsecret']);
 $openId = $tools->GetOpenid();
 
-if(!$openId)sysmsg('OpenId获取失败');
+if(!$openId)sysmsg('OpenId获取失败('.$tools->data['errmsg'].')');
 
 $_SESSION['openid'] = $openId;
 
@@ -33,7 +31,7 @@ $_SESSION['openid'] = $openId;
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 	<title>获取OpenID</title>
-    <link href="//cdn.bootcss.com/ionic/1.3.1/css/ionic.min.css" rel="stylesheet" />
+    <link href="<?php echo $cdnpublic?>ionic/1.3.2/css/ionic.min.css" rel="stylesheet" />
 <style type="text/css">
 .qr-text {padding: 30px;margin: 5px 0;background-color: #FDFDCA;border-radius: 3px;border: 1px solid #EEEEEE;word-wrap: break-word;word-break: break-all;}
 </style>
@@ -50,12 +48,8 @@ $_SESSION['openid'] = $openId;
 <div class="text-center" style="padding: 15px;">
 <span>如未自动填写，请手动复制下方OpenId：</span>
 <p class="qr-text"><strong><?php echo $openId?></strong></p>
+<p class="qr-text"><input type="text" value="<?php echo $openId?>" style="width: 100%;"></p>
 </div>
 </div>
-<script>
-document.querySelector('body').addEventListener('touchmove', function (event) {
-	event.preventDefault();
-});
-</script>
 </body>
 </html>

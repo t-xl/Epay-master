@@ -19,9 +19,9 @@ function display_device($device){
 		return 'PC+Mobile';
 }
 
-$list = $DB->getAll("SELECT * FROM pre_type");
+$list = $DB->getAll("SELECT * FROM pre_type ORDER BY id ASC");
 ?>
-<div class="modal" id="modal-store" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="modal-store" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content animated flipInX">
 			<div class="modal-header">
@@ -78,12 +78,12 @@ $list = $DB->getAll("SELECT * FROM pre_type");
    <div class="panel-heading"><h3 class="panel-title">系统共有 <b><?php echo count($list);?></b> 个支付方式&nbsp;<span class="pull-right"><a href="javascript:addframe()" class="btn btn-default btn-xs"><i class="fa fa-plus"></i> 新增</a></span></h3></div>
       <div class="table-responsive">
         <table class="table table-striped">
-          <thead><tr><th>调用值</th><th>名称</th><th>支持设备</th><th>状态</th><th>操作</th></tr></thead>
+          <thead><tr><th>调用值</th><th>名称</th><th>支持设备</th><th>今日收款</th><th>状态</th><th>操作</th></tr></thead>
           <tbody>
 <?php
 foreach($list as $res)
 {
-echo '<tr><td><b>'.$res['name'].'</b></td><td>'.$res['showname'].'</td><td>'.display_device($res['device']).'</td><td>'.($res['status']==1?'<a class="btn btn-xs btn-success" onclick="setStatus('.$res['id'].',0)">已开启</a>':'<a class="btn btn-xs btn-warning" onclick="setStatus('.$res['id'].',1)">已关闭</a>').'</td><td><a class="btn btn-xs btn-info" onclick="editframe('.$res['id'].')">编辑</a>&nbsp;<a class="btn btn-xs btn-danger" onclick="delItem('.$res['id'].')">删除</a></td></tr>';
+echo '<tr><td><b>'.$res['name'].'</b></td><td>'.$res['showname'].'</td><td>'.display_device($res['device']).'</td><td><a onclick="getAll(0,'.$res['id'].',this)" title="点此获取最新数据">[刷新]</a></td><td>'.($res['status']==1?'<a class="btn btn-xs btn-success" onclick="setStatus('.$res['id'].',0)">已开启</a>':'<a class="btn btn-xs btn-warning" onclick="setStatus('.$res['id'].',1)">已关闭</a>').'</td><td><a class="btn btn-xs btn-info" onclick="editframe('.$res['id'].')">编辑</a>&nbsp;<a class="btn btn-xs btn-danger" onclick="delItem('.$res['id'].')">删除</a>&nbsp;<a href="./order.php?type='.$res['id'].'" target="_blank" class="btn btn-xs btn-default">订单</a></td></tr>';
 }
 ?>
           </tbody>
@@ -92,7 +92,7 @@ echo '<tr><td><b>'.$res['name'].'</b></td><td>'.$res['showname'].'</td><td>'.dis
 	</div>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function addframe(){
 	$("#modal-store").modal('show');
@@ -107,7 +107,7 @@ function editframe(id){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=getPayType&id='+id,
+		url : 'ajax_pay.php?act=getPayType&id='+id,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -136,7 +136,7 @@ function save(){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=savePayType',
+		url : 'ajax_pay.php?act=savePayType',
 		data : $("#form-store").serialize(),
 		dataType : 'json',
 		success : function(data) {
@@ -168,7 +168,7 @@ function delItem(id) {
 	}, function(){
 	  $.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=delPayType&id='+id,
+		url : 'ajax_pay.php?act=delPayType&id='+id,
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){
@@ -189,13 +189,33 @@ function delItem(id) {
 function setStatus(id,status) {
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=setPayType&id='+id+'&status='+status,
+		url : 'ajax_pay.php?act=setPayType&id='+id+'&status='+status,
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){
 				window.location.reload()
 			}else{
 				layer.msg(data.msg, {icon:2, time:1500});
+			}
+		},
+		error:function(data){
+			layer.msg('服务器错误');
+			return false;
+		}
+	});
+}
+function getAll(type, typeid, obj){
+	var ii = layer.load();
+	$.ajax({
+		type : 'GET',
+		url : 'ajax_pay.php?act=getTypeMoney&type='+type+'&typeid='+typeid,
+		dataType : 'json',
+		success : function(data) {
+			layer.close(ii);
+			if(data.code == 0){
+				$(obj).html(data.money);
+			}else{
+				layer.alert(data.msg, {icon: 2})
 			}
 		},
 		error:function(data){

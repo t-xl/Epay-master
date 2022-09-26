@@ -7,13 +7,18 @@ include './head.php';
 <?php
 
 $type_select = '<option value="0">所有支付方式</option>';
-$rs = $DB->getAll("SELECT * FROM pre_type WHERE status=1");
+$rs = $DB->getAll("SELECT * FROM pre_type WHERE status=1 ORDER BY id ASC");
 foreach($rs as $row){
 	$type_select .= '<option value="'.$row['id'].'">'.$row['showname'].'</option>';
 }
 unset($rs);
 
 ?>
+<style>
+.dates{max-width: 120px;}
+.fixed-table-toolbar,.fixed-table-pagination{padding: 15px;}
+</style>
+<link href="../assets/css/datepicker.css" rel="stylesheet">
  <div id="content" class="app-content" role="main">
     <div class="app-content-body ">
 
@@ -30,92 +35,123 @@ unset($rs);
 		<div class="panel-heading font-bold">
 			<h3 class="panel-title">订单记录<a href="javascript:searchClear()" class="btn btn-default btn-xs pull-right" title="刷新订单列表"><i class="fa fa-refresh"></i></a></h3>
 		</div>
-	  <div class="row wrapper">
-	    <form onsubmit="return searchOrder()" method="GET" class="form">
-		  <div class="col-md-2">
-	        <div class="form-group">
+
+	    <form onsubmit="return searchSubmit()" method="GET" class="form-inline" id="searchToolbar">
+	      <div class="form-group">
 			<select class="form-control" name="type">
 			  <option value="1">系统订单号</option>
 			  <option value="2">商户订单号</option>
 			  <option value="3">商品名称</option>
 			  <option value="4">商品金额</option>
-			  <option value="5">交易时间</option>
+			  <option value="5">实付金额</option>
+			  <option value="6">网站域名</option>
 			</select>
-		    </div>
 		  </div>
-		  <div class="col-md-6">
 			<div class="form-group" id="searchword">
-			  <input type="text" class="form-control" name="kw" placeholder="搜索内容，时间支持区间查询 例如2018-06-07 16:15>2018-07-06 14:00">
+			  <input type="text" class="form-control" name="kw" placeholder="搜索内容" style="min-width: 300px;">
 			</div>
-		  </div>
-		  <div class="col-md-2">
+			<div class="input-group input-daterange">
+				<input type="text" id="starttime" name="starttime" class="form-control dates" placeholder="开始日期" autocomplete="off" title="留空则不限时间范围">
+				<span class="input-group-addon" onclick="$('#starttime').val('');$('#endtime').val('');" title="清除"><i class="fa fa-chevron-right"></i></span>
+				<input type="text" id="endtime" name="endtime" class="form-control dates" placeholder="结束日期" autocomplete="off" title="留空则不限时间范围">
+			</div>
 			<div class="form-group">
-			  <select name="paytype" class="form-control" default="<?php echo $_GET['type']?$_GET['type']:0?>"><?php echo $type_select?></select>
+			  <select name="paytype" class="form-control"><?php echo $type_select?></select>
 		    </div>
-		  </div>
-		  <div class="col-md-2">
-			 <div class="form-group">
-				<button class="btn btn-default" type="submit">搜索</button>
-			 </div>
-		  </div>
+			<div class="form-group">
+				<select name="dstatus" class="form-control"><option value="-1">全部状态</option><option value="0">状态未支付</option><option value="1">状态已支付</option><option value="2">状态已退款</option><option value="3">状态已冻结</option></select>
+			</div>
+			<button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> 搜索</button>
 		</form>
-      </div>
-<div id="listTable"></div>
+      <table id="listTable">
+	  </table>
 	</div>
-<?php if($DB->getRow("SHOW TABLES LIKE 'pay_order_old'")){echo '<a href="./order_old.php" class="btn btn-default btn-xs">历史订单查询</a>';}?>
 </div>
     </div>
   </div>
-
+  <a style="display: none;" href="" id="vurl" rel="noreferrer" target="_blank"></a>
 <?php include 'foot.php';?>
-<a style="display: none;" href="" id="vurl" rel="noreferrer" target="_blank"></a>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-table/1.20.2/bootstrap-table.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-table/1.20.2/extensions/page-jump-to/bootstrap-table-page-jump-to.min.js"></script>
+<script src="../assets/js/custom.js"></script>
 <script>
-var dstatus = 0;
-function listTable(query){
-	var url = window.document.location.href.toString();
-	var queryString = url.split("?")[1];
-	query = query || queryString;
-	if(query == 'start' || query == undefined){
-		query = '';
-		history.replaceState({}, null, './order.php');
-	}else if(query != undefined){
-		history.replaceState({}, null, './order.php?'+query);
-	}
-	layer.closeAll();
-	var ii = layer.load(2, {shade:[0.1,'#fff']});
-	$.ajax({
-		type : 'GET',
-		url : 'order-table.php?dstatus='+dstatus+'&'+query,
-		dataType : 'html',
-		cache : false,
-		success : function(data) {
-			layer.close(ii);
-			$("#listTable").html(data)
-		},
-		error:function(data){
-			layer.msg('服务器错误');
-			return false;
-		}
+$(document).ready(function(){
+	updateToolbar();
+	const defaultPageSize = 20;
+	const pageNumber = typeof window.$_GET['pageNumber'] != 'undefined' ? parseInt(window.$_GET['pageNumber']) : 1;
+	const pageSize = typeof window.$_GET['pageSize'] != 'undefined' ? parseInt(window.$_GET['pageSize']) : defaultPageSize;
+
+	$("#listTable").bootstrapTable({
+		url: 'ajax2.php?act=orderList',
+		pageNumber: pageNumber,
+		pageSize: pageSize,
+		classes: 'table table-striped table-hover table-bordered',
+		columns: [
+			{
+				field: 'trade_no',
+				title: '系统订单号/商户订单号',
+				formatter: function(value, row, index) {
+					return value+'<br/>'+row.out_trade_no;
+				}
+			},
+			{
+				field: 'name',
+				title: '商品名称'
+			},
+			{
+				field: 'money',
+				title: '商品金额',
+				formatter: function(value, row, index) {
+					return '￥<b>'+value+'</b>';
+				}
+			},
+			{
+				field: 'typename',
+				title: '支付方式',
+				formatter: function(value, row, index) {
+					return value ? '<b><img src="/assets/icon/'+value+'.ico" width="16" onerror="this.style.display=\'none\'">'+row.typeshowname+'</b>' : '';
+				}
+			},
+			{
+				field: 'addtime',
+				title: '创建时间/完成时间',
+				formatter: function(value, row, index) {
+					return value+'<br/>'+(row.endtime??'&nbsp;');
+				}
+			},
+			{
+				field: 'status',
+				title: '支付状态',
+				formatter: function(value, row, index) {
+					switch(value){
+						case '1': return '<font color=green>已支付</font>';break;
+						case '2': return '<font color=red>已退款</font>';break;
+						case '3': return '<font color=red>已冻结</font>';break;
+						default: return '<font color=blue>未支付</font>';break;
+					}
+				}
+			},
+			{
+				field: '',
+				title: '操作',
+				formatter: function(value, row, index) {
+					return '<a href="./record.php?type=3&kw='+row.trade_no+'" class="btn btn-info btn-xs">明细</a>&nbsp;<a href="javascript:callnotify(\''+row.trade_no+'\')" class="btn btn-success btn-xs">补单</a>';
+				}
+			},
+		],
 	});
-}
-function searchOrder(){
-	var type=$("select[name='type']").val();
-	var kw=$("input[name='kw']").val();
-	var paytype=$("select[name='paytype']").val();
-	if(kw==''){
-		listTable('paytype='+paytype);
-	}else{
-		listTable('type='+type+'&kw='+kw+'&paytype='+paytype);
-	}
-	return false;
-}
-function searchClear(){
-	$("select[name='type']").val(1);
-	$("input[name='kw']").val('');
-	$("select[name='paytype']").val(0);
-	listTable('start');
-}
+
+	$('.input-datepicker, .input-daterange').datepicker({
+        format: 'yyyy-mm-dd',
+		autoclose: true,
+        clearBtn: true,
+        language: 'zh-CN'
+    });
+})
+
 function callnotify(trade_no){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
@@ -162,16 +198,5 @@ function callreturn(trade_no){
 	});
 	return false;
 }
-$(document).ready(function(){
-	var items = $("select[default]");
-	for (i = 0; i < items.length; i++) {
-		$(items[i]).val($(items[i]).attr("default")||0);
-	}
-	listTable();
-	$("#dstatus").change(function () {
-		var val = $(this).val();
-		dstatus = val;
-		listTable();
-	});
-})
+
 </script>

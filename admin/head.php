@@ -1,21 +1,34 @@
 <?php
 @header('Content-Type: text/html; charset=UTF-8');
+
+$admin_cdnpublic = 0;
+if($admin_cdnpublic==1){
+	$cdnpublic = '//lib.baomitu.com/';
+}elseif($admin_cdnpublic==2){
+	$cdnpublic = 'https://cdn.bootcdn.net/ajax/libs/';
+}elseif($admin_cdnpublic==4){
+	$cdnpublic = '//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/';
+}else{
+	$cdnpublic = '//cdn.staticfile.org/';
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title><?php echo $title ?></title>
-  <link href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
-  <script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.min.js"></script>
-  <script src="//cdn.staticfile.org/jquery/2.1.4/jquery.min.js"></script>
-  <script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="../assets/css/bootstrap-table.css?v=1" rel="stylesheet"/>
+  <link href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+  <script src="<?php echo $cdnpublic?>modernizr/2.8.3/modernizr.min.js"></script>
+  <script src="<?php echo $cdnpublic?>jquery/2.1.4/jquery.min.js"></script>
+  <script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <!--[if lt IE 9]>
-    <script src="//cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="//cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <script src="<?php echo $cdnpublic?>html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="<?php echo $cdnpublic?>respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
 <body>
@@ -42,22 +55,24 @@
 		  <li class="<?php echo checkIfActive('settle,slist')?>">
             <a href="./slist.php"><i class="fa fa-cloud"></i> 结算管理</a>
           </li>
-		  <li class="<?php echo checkIfActive('ulist,glist,group,record')?>">
+		  <li class="<?php echo checkIfActive('ulist,glist,group,record,uset,domain')?>">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> 商户管理<b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href="./ulist.php">用户列表</a></li>
 			  <li><a href="./glist.php">用户组设置</a></li>
 			  <li><a href="./group.php">用户组购买</a></li>
 			  <li><a href="./record.php">资金明细</a></li>
+        <?php if($conf['pay_domain_forbid']==1 || $conf['pay_domain_open']==1){?><li><a href="./domain.php">授权域名</a></li><?php }?>
             </ul>
           </li>
-		  <li class="<?php echo checkIfActive('pay_channel,pay_roll,pay_type,pay_plugin')?>">
+		  <li class="<?php echo checkIfActive('pay_channel,pay_roll,pay_type,pay_plugin,pay_weixin')?>">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-credit-card"></i> 支付接口<b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href="./pay_channel.php">支付通道</a></li>
-			  <li><a href="./pay_roll.php">通道轮询</a></li>
 			  <li><a href="./pay_type.php">支付方式</a></li>
 			  <li><a href="./pay_plugin.php">支付插件</a></li>
+        <li><a href="./pay_roll.php">支付通道轮询</a></li>
+        <li><a href="./pay_weixin.php">公众号小程序</a></li>
             </ul>
           </li>
 		  <li class="<?php echo checkIfActive('set,gonggao')?>">
@@ -75,7 +90,7 @@
 			  <li><a href="./set.php?mod=cron">计划任务配置</a><li>
             </ul>
           </li>
-		  <li class="<?php echo checkIfActive('clean,log,transfer')?>">
+		  <li class="<?php echo checkIfActive('clean,log,transfer,risk,alipayrisk')?>">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cube"></i> 其他功能<b class="caret"></b></a>
             <ul class="dropdown-menu">
 			  <li><a href="./transfer.php">企业付款</a><li>

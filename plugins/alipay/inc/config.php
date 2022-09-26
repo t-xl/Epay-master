@@ -19,10 +19,10 @@ $config = array (
 	'app_id' => $channel['appid'],
 
 	//异步通知地址
-	'notify_url' => $conf['localurl'].'pay/alipay/notify/'.(defined("TRADE_NO")?TRADE_NO:$order['trade_no']).'/',
+	'notify_url' => $conf['localurl'].'pay/notify/'.(defined("TRADE_NO")?TRADE_NO:$order['trade_no']).'/',
 
 	//同步通知地址
-	'return_url' => $conf['localurl'].'pay/alipay/return/'.(defined("TRADE_NO")?TRADE_NO:$order['trade_no']).'/',
+	'return_url' => $conf['localurl'].'pay/return/'.(defined("TRADE_NO")?TRADE_NO:$order['trade_no']).'/',
 
 	//登录返回页面
 	'redirect_uri' => $siteurl.'user/oauth.php',
@@ -30,3 +30,14 @@ $config = array (
 	//实名认证返回页面
 	'cert_return_url' => 'alipays://platformapi/startapp?appId=20000067&url='.urlencode($siteurl.'user/alipaycertok.php'),
 );
+
+if(file_exists(PAY_ROOT.'cert/'.$channel['appid'].'/appCertPublicKey_'.$channel['appid'].'.crt')){
+	$config['appCertPath'] = PAY_ROOT.'cert/'.$channel['appid'].'/appCertPublicKey_'.$channel['appid'].'.crt';
+	$config['alipayCertPath'] = PAY_ROOT.'cert/'.$channel['appid'].'/alipayCertPublicKey_RSA2.crt';
+	$config['rootCertPath'] = PAY_ROOT.'cert/'.$channel['appid'].'/alipayRootCert.crt';
+}
+elseif(file_exists(PAY_ROOT.'cert/appCertPublicKey_'.$channel['appid'].'.crt')){
+	$config['appCertPath'] = PAY_ROOT.'cert/appCertPublicKey_'.$channel['appid'].'.crt';
+	$config['alipayCertPath'] = PAY_ROOT.'cert/alipayCertPublicKey_RSA2.crt';
+	$config['rootCertPath'] = PAY_ROOT.'cert/alipayRootCert.crt';
+}

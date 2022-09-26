@@ -12,11 +12,11 @@ if(!defined('IN_CRONLITE'))exit();
 		<meta name="keywords" content="<?php echo $conf['keywords']?>" />
 		<meta name="description" content="<?php echo $conf['description']?>" />
 		<link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/main.css" />
-		<link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" />
-		<script src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js"></script>
-		<script src="//cdn.staticfile.org/jquery.dropotron/1.4.3/jquery.dropotron.min.js"></script>
-		<!--[if lte IE 8]><script src="//cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script><![endif]-->
-		<!--[if lte IE 8]><script src="//cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script><![endif]-->
+		<link rel="stylesheet" href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" />
+		<script src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
+		<script src="<?php echo $cdnpublic?>jquery.dropotron/1.4.3/jquery.dropotron.min.js"></script>
+		<!--[if lte IE 8]><script src="<?php echo $cdnpublic?>html5shiv/3.7.3/html5shiv.min.js"></script><![endif]-->
+		<!--[if lte IE 8]><script src="<?php echo $cdnpublic?>respond.js/1.4.2/respond.min.js"></script><![endif]-->
 		<title><?php echo $conf['title']?></title>
 	</head>
 
@@ -24,7 +24,7 @@ if(!defined('IN_CRONLITE'))exit();
 		<section id="page-wrapper">
 			<!-- Header -->
 			<header id="header">
-				<h1><a href="#"><img src="assets/img/logo.png"></a></h1>
+				<h1><a href="#"><img src="assets/img/logo.png" style="max-height:60px;" ></a></h1>
 				<nav id="nav">
 					<ul>
 						<li>

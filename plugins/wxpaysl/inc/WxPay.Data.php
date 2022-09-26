@@ -50,8 +50,7 @@ class WxPayDataBase
 	**/
 	public function ToXml()
 	{
-		if(!is_array($this->values) 
-			|| count($this->values) <= 0)
+		if(!is_array($this->values) || count($this->values) <= 0)
 		{
     		throw new WxPayException("数组数据异常！");
     	}
@@ -872,6 +871,57 @@ class WxPayOrderQuery extends WxPayDataBase
 		return array_key_exists('mch_id', $this->values);
 	}
 
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
+	}
+
 
 	/**
 	* 设置微信的订单号，优先使用
@@ -1010,6 +1060,57 @@ class WxPayCloseOrder extends WxPayDataBase
 		return array_key_exists('mch_id', $this->values);
 	}
 
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
+	}
+
 
 	/**
 	* 设置商户系统内部的订单号
@@ -1120,6 +1221,57 @@ class WxPayRefund extends WxPayDataBase
 	public function IsMch_idSet()
 	{
 		return array_key_exists('mch_id', $this->values);
+	}
+
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
 	}
 
 
@@ -1415,6 +1567,57 @@ class WxPayRefundQuery extends WxPayDataBase
 		return array_key_exists('mch_id', $this->values);
 	}
 
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
+	}
+
 
 	/**
 	* 设置微信支付分配的终端设备号
@@ -1630,6 +1833,57 @@ class WxPayDownloadBill extends WxPayDataBase
 		return array_key_exists('mch_id', $this->values);
 	}
 
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
+	}
+
 
 	/**
 	* 设置微信支付分配的终端设备号，填写此字段，只下载该设备号的对账单
@@ -1791,6 +2045,57 @@ class WxPayReport extends WxPayDataBase
 	public function IsMch_idSet()
 	{
 		return array_key_exists('mch_id', $this->values);
+	}
+
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
 	}
 
 
@@ -2279,6 +2584,58 @@ class WxPayMicroPay extends WxPayDataBase
 
 
 	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
+	}
+
+
+	/**
 	* 设置终端设备号(商户自定义，如门店编号)
 	* @param string $value 
 	**/
@@ -2672,6 +3029,57 @@ class WxPayReverse extends WxPayDataBase
 	public function IsMch_idSet()
 	{
 		return array_key_exists('mch_id', $this->values);
+	}
+
+	/**
+	* 微信分配的子商户公众账号ID
+	* @param string $value 
+	**/
+	public function SetSubAppid($value)
+	{
+		$this->values['sub_appid'] = $value;
+	}
+	/**
+	* 获取微信分配的子商户公众账号ID
+	* @return 值
+	**/
+	public function GetSubAppid()
+	{
+		return $this->values['sub_appid'];
+	}
+	/**
+	* 判断微信分配的子商户公众账号ID是否存在
+	* @return true 或 false
+	**/
+	public function IsSubAppidSet()
+	{
+		return array_key_exists('sub_appid', $this->values);
+	}
+
+
+	/**
+	* 设置微信支付分配的子商户号
+	* @param string $value 
+	**/
+	public function SetSubMch_id($value)
+	{
+		$this->values['sub_mch_id'] = $value;
+	}
+	/**
+	* 获取微信支付分配的子商户号的值
+	* @return 值
+	**/
+	public function GetSubMch_id()
+	{
+		return $this->values['sub_mch_id'];
+	}
+	/**
+	* 判断微信支付分配的子商户号是否存在
+	* @return true 或 false
+	**/
+	public function IsSubMch_idSet()
+	{
+		return array_key_exists('sub_mch_id', $this->values);
 	}
 
 

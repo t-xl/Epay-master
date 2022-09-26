@@ -13,7 +13,7 @@ if($conf['group_buy']==0)exit('未开启购买会员');
 
 $paytype = [];
 $paytypes = [];
-$rs = $DB->getAll("SELECT * FROM pre_type");
+$rs = $DB->getAll("SELECT * FROM pre_type ORDER BY id ASC");
 foreach($rs as $row){
 	$paytype[$row['id']] = $row['showname'];
 	$paytypes[$row['id']] = $row['name'];
@@ -26,7 +26,7 @@ function display_info($info){
 	$arr = json_decode($info, true);
 	foreach($arr as $k=>$v){
 		if($v['channel']==0)continue;
-		$result .= '<label><img src="/assets/icon/'.$paytypes[$k].'.ico" width="18px" title="'.$v['channel'].'">&nbsp;'.$paytype[$k].'('.$v['rate'].'%)</label>&nbsp;&nbsp;';
+		$result .= '<label><img src="/assets/icon/'.$paytypes[$k].'.ico" width="18px" title="'.$v['channel'].'">&nbsp;'.$paytype[$k].'('.(100-$v['rate']).'%)</label>&nbsp;&nbsp;';
 	}
 	return substr($result,0,-1);
 }
@@ -144,7 +144,7 @@ foreach($list as $res){
   </div>
 
 <?php include 'foot.php';?>
-<script src="../assets/layer/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function buy(gid){
 	var ii = layer.load();

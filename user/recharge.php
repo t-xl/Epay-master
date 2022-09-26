@@ -50,7 +50,7 @@ $_SESSION['csrf_token'] = $csrf_token;
 				<div class="form-group">
 					<label class="col-sm-3 control-label">充值金额</label>
 					<div class="col-sm-8">
-						<input class="form-control" type="text" name="money" value="">
+						<input class="form-control" type="text" name="money" value="" autocomplete="off">
 					</div>
 				</div>
 				<div class="form-group">
@@ -84,7 +84,7 @@ $_SESSION['csrf_token'] = $csrf_token;
   </div>
 
 <?php include 'foot.php';?>
-<script src="../assets/layer/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function showneed(){
 	var money = parseFloat($("input[name='money']").val());

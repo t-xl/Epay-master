@@ -96,7 +96,7 @@ $(document).ready(function(){
 		var url = img.src;
 		var a = document.createElement('a');
 		var event = new MouseEvent('click');
-		a.download = '一码支付-' + document.getElementById("recName").value;
+		a.download = '聚合收款-' + document.getElementById("recName").value;
 		a.href = url;
 		a.dispatchEvent(event);
 	});

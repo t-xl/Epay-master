@@ -9,8 +9,16 @@
 
 define("QQ_MCH_ID", $channel['appid']);
 define("QQ_MCH_KEY", $channel['appkey']);
-define("QQ_OP_USERID", $conf['qq_op_userid']);
-define("QQ_OP_USERPWD", $conf['qq_op_userpwd']);
+define("QQ_OP_USERID", $channel['appurl']);
+define("QQ_OP_USERPWD", $channel['appmchid']);
+
+if(file_exists(PAY_ROOT.'cert/'.$channel['appid'].'/apiclient_cert.pem') && file_exists(PAY_ROOT.'cert/'.$channel['appid'].'/apiclient_key.pem')){
+	define("QQ_SSLCERT_PATH", PAY_ROOT.'cert/'.$channel['appid'].'/apiclient_cert.pem');
+	define("QQ_SSLKEY_PATH", PAY_ROOT.'cert/'.$channel['appid'].'/apiclient_key.pem');
+}else{
+	define("QQ_SSLCERT_PATH", PAY_ROOT.'cert/apiclient_cert.pem');
+	define("QQ_SSLKEY_PATH", PAY_ROOT.'cert/apiclient_key.pem');
+}
 
 class QpayMchConf
 {
@@ -34,8 +42,8 @@ class QpayMchConf
 	 * API证书绝对路径
 	 * QQ钱包接口中，涉及资金回滚的接口会使用到商户证书，包括退款、撤销接口。商家在申请QQ钱包支付成功后，收到的相应邮件后，可以按照指引下载API证书，也可以按照以下路径下载：QQ钱包商户平台(https://qpay.qq.com/)-->账户管理-->API安全 。
 	 */
-	const SSLCERT_PATH = PAY_ROOT.'cert/apiclient_cert.pem';
-	const SSLKEY_PATH = PAY_ROOT.'cert/apiclient_key.pem';
+	const SSLCERT_PATH = QQ_SSLCERT_PATH;
+	const SSLKEY_PATH = QQ_SSLKEY_PATH;
 
 	/**
 	 * 企业付款-操作员ID

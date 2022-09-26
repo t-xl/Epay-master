@@ -9,7 +9,7 @@ if(!defined('IN_CRONLITE'))exit();
     <title><?php echo $conf['title']?></title>
   	<meta name="keywords" content="<?php echo $conf['keywords']?>">
 	<meta name="description" content="<?php echo $conf['description']?>">	
-    <link href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo STATIC_ROOT?>css/style.css" rel="stylesheet">
     <style>
         *{-webkit-font-smoothing: antialiased;list-style:none;font-family: "Helvetica", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;}
@@ -212,7 +212,7 @@ if(!defined('IN_CRONLITE'))exit();
                             <div class="col-xs-12">
                                 <p class="plan-title">一次性注册费用</p>
                                 <img src="<?php echo STATIC_ROOT?>picture/shop2.svg" class="plan-icon" style="width: 120px;">
-                                <h2 class="plan-pricing"><?php echo $conf['reg_pay_price']?>元<span>由导演易支付收取注册费用</span></h2>
+                                <h2 class="plan-pricing"><?php echo $conf['reg_pay_price']?>元<span>由<?php echo $conf['sitename']?>收取注册费用</span></h2>
                             </div>
                         </div>
                     </div>
@@ -223,7 +223,7 @@ if(!defined('IN_CRONLITE'))exit();
                             <div class="col-xs-12">
                                 <p class="plan-title">三网支付订单费率</p>
                                 <img src="<?php echo STATIC_ROOT?>picture/money.svg" class="plan-icon" alt="">
-                                <h2 class="plan-pricing">3%<span>由导演易支付官方收取</span></h2>
+                                <h2 class="plan-pricing">3%<span>由<?php echo $conf['sitename']?>官方收取</span></h2>
                                 <div style="font-size:12px;color:gray;"></div>
                             </div>
                         </div>
@@ -289,7 +289,7 @@ if(!defined('IN_CRONLITE'))exit();
             <div class="row">
                 <div class="col-xs-12 text-center">
                     <img src="<?php echo STATIC_ROOT?>picture/logo1.ico" style="width:30px;margin-bottom: 20px; opacity: 0.7;">
-                    <address><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved.&nbsp;<?php echo $conf['footer']?></address>
+                    <address><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;<?php echo date("Y")?>&nbsp;All Rights Reserved.&nbsp;<?php echo $conf['footer']?></address>
                 </div>
             </div>
         </div>

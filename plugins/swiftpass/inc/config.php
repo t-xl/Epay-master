@@ -3,9 +3,10 @@
 define("PAY_API_APPID", $channel['appid']);
 define("PAY_API_KEY", $channel['appkey']);
 define("PAY_API_APPSECRET", $channel['appsecret']);
+define("PAY_API_URL", $channel['appurl'] ? $channel['appurl'] : 'https://pay.swiftpass.cn/pay/gateway');
 class Config{
     private $cfg = array(
-        'url'=>'https://pay.swiftpass.cn/pay/gateway', /*支付接口请求地址 */
+        'url'=>PAY_API_URL, /*支付接口请求地址 */
         'mchId'=>PAY_API_APPID, /* 商户号，于申请成功后的开户邮件中获取 */
         'version'=>'2.0',
         'sign_type'=>'RSA_1_256',

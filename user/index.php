@@ -5,6 +5,22 @@ if($islogin2==1){}else exit("<script language='javascript'>window.location.href=
 if(empty($userrow['account']) || empty($userrow['username'])){
 	exit("<script language='javascript'>window.location.href='./completeinfo.php';</script>");
 }
+
+if($userrow['status']==0){
+	$status = '<font color="red">已封禁</font>';
+}elseif($userrow['pay']==0 && $userrow['settle']==0){
+	$status = '<font color="red">关闭支付、结算</font>';
+}elseif($userrow['pay']==0){
+	$status = '<font color="red">关闭支付</font>';
+}elseif($userrow['settle']==0){
+	$status = '<font color="red">关闭结算</font>';
+}elseif($conf['cert_force']==1 && $userrow['cert']==0){
+	$status = '<a href="certificate.php"><font color="red">未实名认证</font></a>';
+}elseif($userrow['pay']==2){
+	$status = '<font color="orange">待审核</font>';
+}else{
+	$status = '<font color="green">正常</font>';
+}
 $title='用户中心';
 include './head.php';
 ?>
@@ -131,6 +147,7 @@ if(empty($userrow['pwd'])){
                 <img src="<?php echo ($userrow['qq'])?'//q2.qlogo.cn/headimg_dl?bs=qq&dst_uin='.$userrow['qq'].'&src_uin='.$userrow['qq'].'&fid='.$userrow['qq'].'&spec=100&url_enc=0&referer=bu_interface&term_type=PC':'assets/img/user.png'?>" alt="..." class="b b-3x b-white">
               </div>
 			  <div class="h2 font-thin m-t-sm">欢迎您，<?php echo $userrow['username']?></div>
+			  <div class="h4 font-thin m-t-sm">商户状态：<?php echo $status;?></div>
             </div>
             <div class="hbox text-center b-t b-light bg-light">          
               <a class="col padder-v text-muted b-r b-light">
@@ -147,42 +164,42 @@ if(empty($userrow['pwd'])){
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
 					<div class="quick-all">
-						<i class="fa fa-2x"><img src="/assets/icon/alipay.ico" style="border-radius:50px;margin-top: -6px;margin-bottom: -2px;"></i>
+						<i class="fa fa-2x"><img src="assets/img/alipay.png" style="margin-top: -6px;margin-bottom: -2px; height:30px"></i>
 						<h4><span id="order_today_alipay"></span></h4>
 						<p style="word-break: keep-all;">今日支付宝</p>
 					</div>
 				</div>
 				<div class="col-md-2 col-xs-4">
 					<div class="quick-all">
-						<i class="fa fa-qq fa-2x" style="color: #0BB2FF"></i>
+						<i class="fa fa-2x"><img src="assets/img/qqpay.png" style="margin-top: -6px;margin-bottom: -2px; height:30px"></i>
 						<h4><span id="order_today_qqpay"></span></h4>
 						<p style="word-break: keep-all;">今日QQ</p>
 					</div>
 				</div>
 				<div class="col-md-2 col-xs-4">
 					<div class="quick-all">
-						<i class="fa fa-weixin fa-2x" style="color: green"></i>
+						<i class="fa fa-2x"><img src="assets/img/wxpay.png" style="margin-top: -6px;margin-bottom: -2px; height:30px"></i>
 						<h4><span id="order_today_wxpay"></span></h4>
 						<p style="word-break: keep-all;">今日微信</p>
 					</div>
 				</div>
 				<div class="col-md-2 col-xs-4">
 					<div class="quick-all">
-						<i class="fa fa-2x"><img src="assets/img/alipay.png" height="30" style="border-radius:50px;margin-top: -6px;margin-bottom: -2px;"></i>
+						<i class="fa fa-2x"><img src="assets/img/alipay2.png" style="margin-top: -6px;margin-bottom: -2px; height:30px"></i>
 						<h4><span id="order_lastday_alipay"></span></h4>
 						<p style="word-break: keep-all;">昨日支付宝</p>
 					</div>
 				</div>
 				<div class="col-md-2 col-xs-4">
 					<div class="quick-all">
-						<i class="fa fa-qq fa-2x"></i>
+						<i class="fa fa-2x"><img src="assets/img/qqpay2.png" style="margin-top: -6px;margin-bottom: -2px; height:30px"></i>
 						<h4><span id="order_lastday_qqpay"></span></h4>
 						<p style="word-break: keep-all;">昨日QQ</p>
 					</div>
 				</div>
 				<div class="col-md-2 col-xs-4">
 					<div class="quick-all">
-						<i class="fa fa-weixin fa-2x"></i>
+						<i class="fa fa-2x"><img src="assets/img/wxpay2.png" style="margin-top: -6px;margin-bottom: -2px; height:30px"></i>
 						<h4><span id="order_lastday_wxpay"></span></h4>
 						<p style="word-break: keep-all;">昨日微信</p>
 					</div>
@@ -204,7 +221,7 @@ if(empty($userrow['pwd'])){
 		<?php }?>
 		</tr></thead><tbody><tr>
 		<?php foreach($rates as $row){?>
-			<td><?php echo $row['rate']?>%</td>
+			<td><?php echo (100-$row['rate'])?>%</td>
 		<?php }?>
 		</tr></tbody>
 		</table>

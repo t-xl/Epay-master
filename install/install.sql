@@ -5,20 +5,20 @@ create table `pre_config` (
 PRIMARY KEY  (`k`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `pre_config` VALUES ('version', '2001');
+INSERT INTO `pre_config` VALUES ('version', '2020');
 INSERT INTO `pre_config` VALUES ('admin_user', 'admin');
 INSERT INTO `pre_config` VALUES ('admin_pwd', '123456');
 INSERT INTO `pre_config` VALUES ('admin_paypwd', '123456');
-INSERT INTO `pre_config` VALUES ('homepage', '1');
-INSERT INTO `pre_config` VALUES ('sitename', '彩虹易支付');
-INSERT INTO `pre_config` VALUES ('title', '彩虹易支付 - 行业领先的免签约支付平台');
-INSERT INTO `pre_config` VALUES ('keywords', '彩虹易支付,支付宝免签约即时到账,财付通免签约,微信免签约支付,QQ钱包免签约,免签约支付');
-INSERT INTO `pre_config` VALUES ('description', '彩虹易支付是郑州追梦网络科技有限公司旗下的免签约支付产品，完美解决支付难题，一站式接入支付宝，微信，财付通，QQ钱包,微信wap，帮助开发者快速集成到自己相应产品，效率高，见效快，费率低！');
-INSERT INTO `pre_config` VALUES ('orgname', '郑州追梦网络科技有限公司');
+INSERT INTO `pre_config` VALUES ('homepage', '0');
+INSERT INTO `pre_config` VALUES ('sitename', '聚合易支付');
+INSERT INTO `pre_config` VALUES ('title', '聚合易支付 - 行业领先的免签约支付平台');
+INSERT INTO `pre_config` VALUES ('keywords', '聚合易支付,支付宝免签约即时到账,财付通免签约,微信免签约支付,QQ钱包免签约,免签约支付');
+INSERT INTO `pre_config` VALUES ('description', '聚合易支付是XX公司旗下的免签约支付产品，完美解决支付难题，一站式接入支付宝，微信，财付通，QQ钱包,微信wap，帮助开发者快速集成到自己相应产品，效率高，见效快，费率低！');
+INSERT INTO `pre_config` VALUES ('orgname', 'XX公司');
 INSERT INTO `pre_config` VALUES ('kfqq', '123456789');
 INSERT INTO `pre_config` VALUES ('template', 'index1');
 INSERT INTO `pre_config` VALUES ('pre_maxmoney', '1000');
-INSERT INTO `pre_config` VALUES ('blockname', '百度云|摆渡|云盘|点券|芸盘|萝莉|罗莉|网盘|黑号|q币|Q币|扣币|qq货币|QQ货币|花呗|baidu云|bd云|吃鸡|透视|自瞄|后座|穿墙|脚本|外挂|模拟|辅助|检测|武器|套装');
+INSERT INTO `pre_config` VALUES ('blockname', '云盘|网盘|Q币');
 INSERT INTO `pre_config` VALUES ('blockalert', '温馨提醒该商品禁止出售，如有疑问请联系网站客服！');
 INSERT INTO `pre_config` VALUES ('settle_open', '1');
 INSERT INTO `pre_config` VALUES ('settle_type', '1');
@@ -33,13 +33,11 @@ INSERT INTO `pre_config` VALUES ('settle_bank', '0');
 INSERT INTO `pre_config` VALUES ('transfer_alipay', '0');
 INSERT INTO `pre_config` VALUES ('transfer_wxpay', '0');
 INSERT INTO `pre_config` VALUES ('transfer_qqpay', '0');
-INSERT INTO `pre_config` VALUES ('transfer_name', '彩虹易支付');
-INSERT INTO `pre_config` VALUES ('transfer_desc', '彩虹易支付自动结算');
+INSERT INTO `pre_config` VALUES ('transfer_name', '聚合易支付');
+INSERT INTO `pre_config` VALUES ('transfer_desc', '聚合易支付自动结算');
 INSERT INTO `pre_config` VALUES ('login_qq', '0');
-INSERT INTO `pre_config` VALUES ('login_qq_appid', '310786672');
-INSERT INTO `pre_config` VALUES ('login_qq_appkey', 'mkgbmYqS8IZzfGqn');
 INSERT INTO `pre_config` VALUES ('login_alipay', '0');
-INSERT INTO `pre_config` VALUES ('login_alipre_channel', '0');
+INSERT INTO `pre_config` VALUES ('login_alipay_channel', '0');
 INSERT INTO `pre_config` VALUES ('login_wx', '0');
 INSERT INTO `pre_config` VALUES ('login_wx_channel', '0');
 INSERT INTO `pre_config` VALUES ('reg_open', '1');
@@ -56,10 +54,12 @@ INSERT INTO `pre_config` VALUES ('mail_name', '');
 INSERT INTO `pre_config` VALUES ('mail_pwd', '');
 INSERT INTO `pre_config` VALUES ('sms_api', '0');
 INSERT INTO `pre_config` VALUES ('captcha_open', '1');
-INSERT INTO `pre_config` VALUES ('captcha_id', 'b31335edde91b2f98dacd393f6ae6de8');
-INSERT INTO `pre_config` VALUES ('captcha_key', '170d2349acef92b7396c7157eb9d8f47');
+INSERT INTO `pre_config` VALUES ('captcha_id', '');
+INSERT INTO `pre_config` VALUES ('captcha_key', '');
 INSERT INTO `pre_config` VALUES ('onecode', '1');
 INSERT INTO `pre_config` VALUES ('recharge', '1');
+INSERT INTO `pre_config` VALUES ('pageordername', '1');
+INSERT INTO `pre_config` VALUES ('notifyordername', '1');
 
 
 DROP TABLE IF EXISTS `pre_cache`;
@@ -97,6 +97,7 @@ INSERT INTO `pre_type` VALUES (2, 'wxpay', 0, '微信支付', 1);
 INSERT INTO `pre_type` VALUES (3, 'qqpay', 0, 'QQ钱包', 1);
 INSERT INTO `pre_type` VALUES (4, 'bank', 0, '网银支付', 0);
 INSERT INTO `pre_type` VALUES (5, 'jdpay', 0, '京东支付', 0);
+INSERT INTO `pre_type` VALUES (6, 'paypal', 0, 'PayPal', 0);
 
 DROP TABLE IF EXISTS `pre_plugin`;
 CREATE TABLE `pre_plugin` (
@@ -105,25 +106,13 @@ CREATE TABLE `pre_plugin` (
   `author` varchar(60) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `types` varchar(50) DEFAULT NULL,
-  `inputs` text DEFAULT NULL,
-  `select` text DEFAULT NULL,
  PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `pay_plugin` (`name`, `showname`, `author`, `link`, `types`, `inputs`, `select`) VALUES
-('aliold', '支付宝旧版接口', '支付宝', 'https://b.alipay.com/signing/productSetV2.htm', 'alipay', 'appid:合作者身份(PID),appkey:安全校验码(Key)', '1:电脑网站支付,2:手机网站支付'),
-('alipay', '支付宝官方支付', '支付宝', 'https://b.alipay.com/signing/productSetV2.htm', 'alipay', 'appid:应用APPID,appkey:支付宝公钥(RSA2),appsecret:商户私钥(RSA2)', '1:电脑网站支付,2:手机网站支付,3:当面付扫码,4:JS支付'),
-('epay', '彩虹易支付', '彩虹', 'http://blog.cccyun.cc/', 'alipay,qqpay,wxpay,bank', 'appurl:接口地址,appid:商户ID,appkey:商户密钥', ''),
-('jdpay', '京东支付', '京东', 'https://www.jdpay.com/', 'jdpay', 'appid:商户号,appkey:商户DES密钥', ''),
-('micro', '小微支付', '小微支付', 'http://blog.cccyun.cc/', 'alipay,wxpay', 'appurl:接口地址,appid:APPID,appkey:APPKEY,appmchid:商户号MCHID', ''),
-('qqpay', 'QQ钱包官方支付', 'QQ钱包', 'https://qpay.qq.com/', 'qqpay', 'appid:QQ钱包商户号,appkey:QQ钱包API密钥', '1:扫码支付(包含H5),2:公众号支付'),
-('swiftpass', '威富通', '威富通', 'https://www.swiftpass.cn/', 'alipay,wxpay,qqpay,bank,jdpay', 'appid:商户号,appkey:RSA平台公钥,appsecret:RSA应用私钥', '1.手机微信使用公众号支付,1.手机微信使用H5支付'),
-('wxpay', '微信官方支付', '微信', 'https://pay.weixin.qq.com/', 'wxpay', 'appid:公众号APPID,appmchid:商户号,appkey:商户支付密钥,appsecret:公众号SECRET', '1:扫码支付,2:公众号支付,3:H5支付'),
-('wxpaysl', '微信官方支付服务商版', '微信', 'https://pay.weixin.qq.com/partner/public/home', 'wxpay', 'appid:公众号APPID,appmchid:商户号,appkey:商户支付密钥,appsecret:公众号SECRET,appurl:子商户号', '1:扫码支付,2:公众号支付,3:H5支付');
 
 DROP TABLE IF EXISTS `pre_channel`;
 CREATE TABLE `pre_channel` (
   `id` int(11) unsigned NOT NULL auto_increment,
+  `mode` int(1) DEFAULT 0,
   `type` int(11) unsigned NOT NULL,
   `plugin` varchar(30) NOT NULL,
   `name` varchar(30) NOT NULL,
@@ -135,6 +124,13 @@ CREATE TABLE `pre_channel` (
   `appurl` varchar(255) DEFAULT NULL,
   `appmchid` varchar(255) DEFAULT NULL,
   `apptype` varchar(50) DEFAULT NULL,
+  `daytop` int(10) DEFAULT 0,
+  `daystatus` int(1) DEFAULT 0,
+  `paymin` varchar(10) DEFAULT NULL,
+  `paymax` varchar(10) DEFAULT NULL,
+  `appwxmp` int(11) DEFAULT NULL,
+  `appwxa` int(11) DEFAULT NULL,
+  `appswitch` tinyint(4) DEFAULT NULL,
  PRIMARY KEY (`id`),
  KEY type (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -151,13 +147,24 @@ CREATE TABLE `pre_roll` (
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=101;
 
+DROP TABLE IF EXISTS `pre_weixin`;
+CREATE TABLE `pre_weixin` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `type` tinyint(4) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(30) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `appid` varchar(150) DEFAULT NULL,
+  `appsecret` varchar(250) DEFAULT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `pre_order`;
 CREATE TABLE `pre_order` (
-  `trade_no` varchar(64) NOT NULL,
-  `out_trade_no` varchar(255) NOT NULL,
-  `api_trade_no` varchar(255) DEFAULT NULL,
+  `trade_no` char(19) NOT NULL,
+  `out_trade_no` varchar(150) NOT NULL,
+  `api_trade_no` varchar(150) DEFAULT NULL,
   `uid` int(11) unsigned NOT NULL,
-  `tid` int(11) unsigned NOT NULL DEFAULT '0',
+  `tid` tinyint(11) unsigned NOT NULL DEFAULT '0',
   `type` int(10) unsigned NOT NULL,
   `channel` int(10) unsigned NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -166,19 +173,22 @@ CREATE TABLE `pre_order` (
   `getmoney` decimal(10,2) DEFAULT NULL,
   `notify_url` varchar(255) DEFAULT NULL,
   `return_url` varchar(255) DEFAULT NULL,
+  `param` varchar(255) DEFAULT NULL,
   `addtime` datetime DEFAULT NULL,
   `endtime` datetime DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `domain` varchar(32) DEFAULT NULL,
+  `domain` varchar(64) DEFAULT NULL,
+  `domain2` varchar(64) DEFAULT NULL,
   `ip` varchar(20) DEFAULT NULL,
   `buyer` varchar(30) DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `notify` int(5) NOT NULL DEFAULT '0',
+  `notifytime` datetime DEFAULT NULL,
   `invite` int(11) unsigned NOT NULL DEFAULT '0',
   `invitemoney` decimal(10,2) DEFAULT NULL,
  PRIMARY KEY (`trade_no`),
  KEY uid (`uid`),
- KEY out_trade_no (`uid`,`out_trade_no`),
+ KEY out_trade_no (`out_trade_no`,`uid`),
  KEY api_trade_no (`api_trade_no`),
  KEY invite (`invite`),
  KEY date (`date`)
@@ -188,16 +198,20 @@ DROP TABLE IF EXISTS `pre_group`;
 CREATE TABLE `pre_group` (
   `gid` int(11) unsigned NOT NULL auto_increment,
   `name` varchar(30) NOT NULL,
-  `info` varchar(255) DEFAULT NULL,
+  `info` varchar(1024) DEFAULT NULL,
   `isbuy` tinyint(1) NOT NULL DEFAULT 0,
   `price` decimal(10,2) DEFAULT NULL,
   `sort` int(10) NOT NULL DEFAULT 0,
   `expire` int(10) NOT NULL DEFAULT 0,
+  `settle_open` int(1) DEFAULT 0,
+  `settle_type` int(1) DEFAULT 0,
+  `settings` text DEFAULT NULL,
  PRIMARY KEY (`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `pre_group` (`gid`, `name`, `info`) VALUES
 (0, '默认用户组', '{"1":{"type":"","channel":"-1","rate":""},"2":{"type":"","channel":"-1","rate":""},"3":{"type":"","channel":"-1","rate":""}}');
+UPDATE `pre_group` SET `gid` = '0' WHERE `gid` = 1;
 
 DROP TABLE IF EXISTS `pre_user`;
 CREATE TABLE `pre_user` (
@@ -206,32 +220,39 @@ CREATE TABLE `pre_user` (
   `upid` int(11) unsigned NOT NULL DEFAULT 0,
   `key` varchar(32) NOT NULL,
   `pwd` varchar(32) DEFAULT NULL,
-  `account` varchar(32) DEFAULT NULL,
-  `username` varchar(32) DEFAULT NULL,
+  `account` varchar(128) DEFAULT NULL,
+  `username` varchar(128) DEFAULT NULL,
   `codename` varchar(32) DEFAULT NULL,
-  `settle_id` int(1) NOT NULL DEFAULT '1',
-  `alipre_uid` varchar(32) DEFAULT NULL,
+  `settle_id` tinyint(4) NOT NULL DEFAULT '1',
+  `alipay_uid` varchar(32) DEFAULT NULL,
   `qq_uid` varchar(32) DEFAULT NULL,
-  `wxid` varchar(32) DEFAULT NULL,
+  `wx_uid` varchar(32) DEFAULT NULL,
   `money` decimal(10,2) NOT NULL,
   `email` varchar(32) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `qq` varchar(20) DEFAULT NULL,
   `url` varchar(64) DEFAULT NULL,
-  `cert` int(1) NOT NULL DEFAULT '0',
+  `cert` tinyint(4) NOT NULL DEFAULT '0',
+  `certtype` tinyint(4) NOT NULL DEFAULT '0',
+  `certmethod` tinyint(4) NOT NULL DEFAULT '0',
   `certno` varchar(18) DEFAULT NULL,
   `certname` varchar(32) DEFAULT NULL,
   `certtime` datetime DEFAULT NULL,
+  `certtoken` varchar(64) DEFAULT NULL,
+  `certcorpno` varchar(30) DEFAULT NULL,
+  `certcorpname` varchar(80) DEFAULT NULL,
   `addtime` datetime DEFAULT NULL,
   `lasttime` datetime DEFAULT NULL,
   `endtime` datetime DEFAULT NULL,
-  `level` int(1) NOT NULL DEFAULT '1',
-  `pay` int(1) NOT NULL DEFAULT '1',
-  `settle` int(1) NOT NULL DEFAULT '1',
-  `keylogin` int(1) NOT NULL DEFAULT '1',
-  `apply` int(1) NOT NULL DEFAULT '0',
-  `mode` int(1) NOT NULL DEFAULT '0',
-  `status` int(1) NOT NULL DEFAULT '0',
+  `level` tinyint(1) NOT NULL DEFAULT '1',
+  `pay` tinyint(1) NOT NULL DEFAULT '1',
+  `settle` tinyint(1) NOT NULL DEFAULT '1',
+  `keylogin` tinyint(1) NOT NULL DEFAULT '1',
+  `apply` tinyint(1) NOT NULL DEFAULT '0',
+  `mode` tinyint(4) NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `channelinfo` text DEFAULT NULL,
+  `ordername` varchar(255) DEFAULT NULL,
  PRIMARY KEY (`uid`),
  KEY email (`email`),
  KEY phone (`phone`)
@@ -244,8 +265,8 @@ CREATE TABLE `pre_settle` (
   `batch` varchar(20) DEFAULT NULL,
   `auto` int(1) NOT NULL DEFAULT '1',
   `type` int(1) NOT NULL DEFAULT '1',
-  `account` varchar(32) NOT NULL,
-  `username` varchar(10) NOT NULL,
+  `account` varchar(128) NOT NULL,
+  `username` varchar(128) NOT NULL,
   `money` decimal(10,2) NOT NULL,
   `realmoney` decimal(10,2) NOT NULL,
   `addtime` datetime DEFAULT NULL,
@@ -308,8 +329,9 @@ CREATE TABLE `pre_regcode` (
   `time` int(11) NOT NULL,
   `ip` varchar(20) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT '0',
+  `errcount` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY code (`code`)
+  KEY code (`to`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pre_risk`;
@@ -323,4 +345,34 @@ CREATE TABLE `pre_risk` (
   `status` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY uid (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `pre_alipayrisk`;
+CREATE TABLE `pre_alipayrisk` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `channel` int(10) unsigned NOT NULL,
+  `pid` varchar(40) NOT NULL,
+  `smid` varchar(40) DEFAULT NULL,
+  `tradeNos` varchar(40) DEFAULT NULL,
+  `risktype` varchar(40) DEFAULT NULL,
+  `risklevel` varchar(60) DEFAULT NULL,
+  `riskDesc` varchar(500) DEFAULT NULL,
+  `complainTime` varchar(128) DEFAULT NULL,
+  `complainText` varchar(500) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `process_code` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `pre_domain`;
+CREATE TABLE `pre_domain` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `uid` int(11) NOT NULL DEFAULT '0',
+  `domain` varchar(128) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `addtime` datetime DEFAULT NULL,
+  `endtime` datetime DEFAULT NULL,
+ PRIMARY KEY (`id`),
+ KEY `domain` (`domain`,`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

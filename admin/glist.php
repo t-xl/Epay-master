@@ -14,7 +14,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
 <?php
 
 $paytype = [];
-$rs = $DB->getAll("SELECT * FROM pre_type");
+$rs = $DB->getAll("SELECT * FROM pre_type WHERE status=1 ORDER BY id ASC");
 foreach($rs as $row){
 	$paytype[$row['id']] = $row['showname'];
 }
@@ -31,7 +31,7 @@ function display_info($info){
 	return substr($result,0,-1);
 }
 
-$list = $DB->getAll("SELECT * FROM pre_group");
+$list = $DB->getAll("SELECT * FROM pre_group ORDER BY gid ASC");
 ?>
 <div class="modal" id="modal-store" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -77,6 +77,28 @@ echo '<tr><td><b>'.$value.'</b><input type="hidden" name="info['.$key.'][type]" 
 							</table>
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">结算开关</label>
+						<div class="col-sm-10">
+							<select name="settle_open" id="settle_open" class="form-control">
+								<option value="0">缺省（与系统设置一致）</option><option value="1">只开启每日自动结算</option><option value="2">只开启手动申请结算</option><option value="3">开启自动+手动结算</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">手动结算</label>
+						<div class="col-sm-10">
+							<select name="settle_type" id="settle_type" class="form-control">
+								<option value="0">缺省（与系统设置一致）</option><option value="1">T+0（可提现全部余额）</option><option value="2">T+1（可提现1天前的余额）</option><option value="3">T+0秒到账（申请提现后通过转账接口转账）</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label no-padding-right">用户变量</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="settings" id="settings" placeholder="没有请勿填写，格式：变量名1:显示名1,变量名2:显示名2">
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -96,7 +118,7 @@ echo '<tr><td><b>'.$value.'</b><input type="hidden" name="info['.$key.'][type]" 
 <?php
 foreach($list as $res)
 {
-echo '<tr><td><b>'.$res['gid'].'</b></td><td>'.$res['name'].'</td><td>'.display_info($res['info']).'</td><td><a class="btn btn-xs btn-info" onclick="editframe('.$res['gid'].')">编辑</a>&nbsp;<a class="btn btn-xs btn-danger" onclick="delItem('.$res['gid'].')">删除</a></td></tr>';
+echo '<tr><td><b>'.$res['gid'].'</b></td><td>'.$res['name'].'</td><td>'.display_info($res['info']).'</td><td><a class="btn btn-xs btn-default" href="./ulist.php?gid='.$res['gid'].'">用户</a>&nbsp;<a class="btn btn-xs btn-info" onclick="editframe('.$res['gid'].')">编辑</a>&nbsp;<a class="btn btn-xs btn-danger" onclick="delItem('.$res['gid'].')">删除</a></td></tr>';
 }
 ?>
           </tbody>
@@ -108,7 +130,7 @@ echo '<tr><td><b>'.$res['gid'].'</b></td><td>'.$res['name'].'</td><td>'.display_
 	</div>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function changeChannel(type){
 	var rate = $("select[name='info["+type+"][channel]'] option:selected").attr('rate');
@@ -122,12 +144,15 @@ function addframe(){
 	$("#action").val("add");
 	$("#gid").val('');
 	$("#name").val('');
+	$("#settings").val('');
+	$("#settle_open").val(0);
+	$("#settle_type").val(0);
 }
 function editframe(id){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=getGroup&gid='+id,
+		url : 'ajax_user.php?act=getGroup&gid='+id,
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -137,6 +162,9 @@ function editframe(id){
 				$("#action").val("edit");
 				$("#gid").val(data.gid);
 				$("#name").val(data.name);
+				$("#settings").val(data.settings);
+				$("#settle_open").val(data.settle_open);
+				$("#settle_type").val(data.settle_type);
 				$.each(data.info, function (i, res) {
 					$("select[name='info["+i+"][channel]']").val(res.channel);
 					$("input[name='info["+i+"][rate]']").val(res.rate);
@@ -159,7 +187,7 @@ function save(){
 	var ii = layer.load(2, {shade:[0.1,'#fff']});
 	$.ajax({
 		type : 'POST',
-		url : 'ajax.php?act=saveGroup',
+		url : 'ajax_user.php?act=saveGroup',
 		data : $("#form-store").serialize(),
 		dataType : 'json',
 		success : function(data) {
@@ -191,7 +219,7 @@ function delItem(id) {
 	}, function(){
 	  $.ajax({
 		type : 'GET',
-		url : 'ajax.php?act=delGroup&gid='+id,
+		url : 'ajax_user.php?act=delGroup&gid='+id,
 		dataType : 'json',
 		success : function(data) {
 			if(data.code == 0){

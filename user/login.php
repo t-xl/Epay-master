@@ -6,6 +6,7 @@ $is_defend=true;
 include("../includes/common.php");
 
 if(isset($_GET['logout'])){
+	if(!checkRefererHost())exit();
 	setcookie("user_token", "", time() - 604800);
 	@header('Content-Type: text/html; charset=UTF-8');
 	exit("<script language='javascript'>alert('您已成功注销本次登录！');window.location.href='./login.php';</script>");
@@ -21,10 +22,10 @@ $_SESSION['csrf_token'] = $csrf_token;
 <meta charset="utf-8" />
 <title>登录 | <?php echo $conf['sitename']?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/animate.css/3.5.2/animate.min.css" type="text/css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
-<link rel="stylesheet" href="//cdn.staticfile.org/simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>animate.css/3.5.2/animate.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $cdnpublic?>simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
 <link rel="stylesheet" href="./assets/css/font.css" type="text/css" />
 <link rel="stylesheet" href="./assets/css/app.css" type="text/css" />
 <link rel="stylesheet" href="./assets/css/captcha.css" type="text/css" />
@@ -42,6 +43,7 @@ $_SESSION['csrf_token'] = $csrf_token;
 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token?>">
 <div class="text-danger wrapper text-center" ng-show="authError">
 </div>
+<?php if(!$conf['close_keylogin']){?>
 <ul class="nav nav-tabs">
     <li style="width: 50%;" align="center" class="<?php echo $_GET['m']!='key'?'active':null;?>">
   <a href="./login.php">密码登录(New)</a>
@@ -49,7 +51,7 @@ $_SESSION['csrf_token'] = $csrf_token;
     <li style="width: 50%;" align="center" class="<?php echo $_GET['m']=='key'?'active':null;?>">
   <a href="./login.php?m=key">密钥登录</a>
 </li>
-</ul>
+</ul><?php }?>
 <div class="tab-content">
 <div class="tab-pane active">
 <div class="list-group list-group-sm swaplogin">
@@ -88,34 +90,36 @@ $_SESSION['csrf_token'] = $csrf_token;
 <button type="button" class="btn btn-lg btn-primary btn-block" id="submit">立即登录</button>
 </div>
 </div>
-<a href="reg.php" ui-sref="access.signup" class="btn btn-lg btn-default btn-block <?php echo $conf['reg_open']==0?'hide':null;?>">自助申请商户</a>
 <div class="line line-dashed"></div>
+<div class="form-group">
+	<a href="findpwd.php" class="btn btn-info btn-rounded"><i class="fa fa-unlock"></i>&nbsp;找回密码</a>
+	<a href="reg.php" class="btn btn-danger btn-rounded <?php echo $conf['reg_open']==0?'hide':null;?>" style="float:right;"><i class="fa fa-user-plus"></i>&nbsp;注册商户</a>
+</div>
 <?php if(!isset($_GET['connect'])){?>
 <div class="wrapper text-center">
-<?php if($conf['login_alipay']>0){?>
+<?php if($conf['login_alipay']>0 || $conf['login_alipay']==-1){?>
 <button type="button" class="btn btn-rounded btn-lg btn-icon btn-default" title="支付宝快捷登录" onclick="window.location.href='oauth.php'"><img src="../assets/icon/alipay.ico" style="border-radius:50px;"></button>
 <?php }?>
 <?php if($conf['login_qq']>0){?>
 <button type="button" class="btn btn-rounded btn-lg btn-icon btn-default" title="QQ快捷登录" onclick="window.location.href='connect.php'"><i class="fa fa-qq fa-lg" style="color: #0BB2FF"></i></button>
 <?php }?>
-<?php if($conf['login_wx']>0){?>
+<?php if($conf['login_wx']>0 || $conf['login_wx']==-1){?>
 <button type="button" class="btn btn-rounded btn-lg btn-icon btn-default" title="微信快捷登录" onclick="window.location.href='wxlogin.php'"><i class="fa fa-wechat fa-lg" style="color: green"></i></button>
 </div>
 <?php }?>
 <?php }?>
-<div class="text-center m-t m-b"><a ui-sref="access.forgotpwd" href="findpwd.php">找回密码</a></div>
 </form>
 </div>
 <div class="text-center">
 <p>
-<small class="text-muted"><a href="/"><?php echo $conf['sitename']?></a><br>&copy; 2016~2020</small>
+<small class="text-muted"><a href="/"><?php echo $conf['sitename']?></a><br>&copy; 2016~<?php echo date("Y")?></small>
 </p>
 </div>
 </div>
 </div>
-<script src="//cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
-<script src="//cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="../assets/layer/layer.js"></script>
+<script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script src="//static.geetest.com/static/tools/gt.js"></script>
 <script>
 var captcha_open = 0;

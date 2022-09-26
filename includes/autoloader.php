@@ -25,13 +25,9 @@ class Autoloader
         $filePath = str_replace('\\', DIRECTORY_SEPARATOR, $filePath) . '.php';
         if (file_exists($filePath)) {
             require_once $filePath;
-            return;
-//                if(method_exists($className, "init")) {
-//                    call_user_func(array($className, "init"), $params);
-//                }
+            return true;
         } else {
-            echo "无法加载" . $filePath;
+            return false;
         }
-
     }
 }

@@ -11,6 +11,8 @@ if(strlen($userrow['phone'])==11){
 	$userrow['phone']=substr($userrow['phone'],0,3).'****'.substr($userrow['phone'],7,10);
 }
 
+if(!$conf['apiurl'])$conf['apiurl'] = $siteurl;
+
 ?>
  <div id="content" class="app-content" role="main">
     <div class="app-content-body ">
@@ -47,7 +49,7 @@ if(strlen($userrow['phone'])==11){
 				<div class="form-group">
 					<label class="col-sm-2 control-label">接口地址</label>
 					<div class="col-sm-9">
-						<div class="input-group"><input class="form-control" type="text" value="<?php echo $siteurl?>" readonly><div class="input-group-addon"><a href="javascript:;" class="copy-btn" data-clipboard-text="<?php echo $siteurl?>" title="点击复制"><i class="fa fa-copy"></i></a></div></div>
+						<div class="input-group"><input class="form-control" type="text" value="<?php echo $conf['apiurl']?>" readonly><div class="input-group-addon"><a href="javascript:;" class="copy-btn" data-clipboard-text="<?php echo $conf['apiurl']?>" title="点击复制"><i class="fa fa-copy"></i></a></div></div>
 					</div>
 				</div>
 				<div class="form-group">
@@ -104,8 +106,8 @@ if(strlen($userrow['phone'])==11){
     </div>
   </div>
 <?php include 'foot.php';?>
-<script src="../assets/layer/layer.js"></script>
-<script src="//cdn.staticfile.org/clipboard.js/1.7.1/clipboard.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>clipboard.js/1.7.1/clipboard.min.js"></script>
 <script>
 $(document).ready(function(){
 	var clipboard = new Clipboard('.copy-btn');

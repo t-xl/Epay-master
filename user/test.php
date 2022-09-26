@@ -24,8 +24,7 @@ if(isset($_GET['ok']) && isset($_GET['trade_no'])){
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<title><?php echo $conf['sitename']?> - 测试支付</title>
-    <link href="//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-	<link href="./assets/css/bootswatch.min.css" rel="stylesheet"/>
+    <link href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
 <div class="container">
 <div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
@@ -68,14 +67,14 @@ if(isset($_GET['ok']) && isset($_GET['trade_no'])){
 </form>
 </div>
 <div class="panel-footer text-center">
-<?php echo $conf['sitename']?> © 2020 All Rights Reserved.
+<?php echo $conf['sitename']?> © <?php echo date("Y")?> All Rights Reserved.
 </div>
 </div>
 </div>
 </div>
-<script src="//cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
-<script src="//cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="../assets/layer/layer.js"></script>
+<script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script>
 function submitPay(obj){
 	var csrf_token=$("input[name='csrf_token']").val();

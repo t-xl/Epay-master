@@ -1,4 +1,5 @@
 <?php
+$is_defend = true;
 include("./inc.php");
 if(isset($_GET['merchant'])){
 	$merchant=isset($_GET['merchant'])?trim($_GET['merchant']):showerror('参数不完整');
@@ -9,31 +10,37 @@ if(isset($_GET['merchant'])){
 }else{
 	showerror('参数错误');
 }
-$userrow=$DB->getRow("select * from pre_user where uid='$uid' limit 1");
+$userrow = $DB->getRow("SELECT `uid`,`gid`,`money`,`mode`,`pay`,`cert`,`status`,`channelinfo`,`qq`,`codename` FROM `pre_user` WHERE `uid`='{$uid}' LIMIT 1");
 if(!$userrow || $userrow['status']==0 || $userrow['pay']==0)showerror('当前商户不存在或已被封禁');
 if($conf['cert_force']==1 && $userrow['cert']==0){
 	showerror('当前商户未完成实名认证，无法收款');
+}
+if($conf['forceqq']==1 && empty($userrow['qq'])){
+	showerror('当前商户未填写联系QQ，无法收款');
 }
 
 $_SESSION['paypage_uid'] = $uid;
 
 $direct = '0';
-$type = check_paytype();
+$checktype = check_paytype();
+$type = isset($_GET['type'])?trim($_GET['type']):$checktype;
 if($type){
 	$submitData = \lib\Channel::submit($type, $userrow['gid']);
 	$apptype = explode(',',$submitData['apptype']);
-	if($type == 'alipay' && in_array('4',$apptype)){
+	if($checktype == 'alipay' && $type == 'alipay' && ($submitData['plugin']=='alipay' || $submitData['plugin']=='alipaysl') && in_array('4',$apptype)){
 		$openId = alipayOpenId($submitData['channel']);
 		$direct = '1';
-	}elseif($type == 'wxpay' && in_array('2',$apptype)){
+	}elseif($checktype == 'wxpay' && $type == 'wxpay' && ($submitData['plugin']=='wxpay' || $submitData['plugin']=='wxpaysl' || $submitData['plugin']=='wxpayn' || $submitData['plugin']=='wxpaynp') && in_array('2',$apptype)){
 		$openId = weixinOpenId($submitData['channel']);
 		$direct = '1';
-	}elseif($type == 'qqpay' && in_array('2',$apptype)){
+	}elseif($checktype == 'qqpay' && $type == 'qqpay'&& $submitData['plugin']=='qqpay' && in_array('2',$apptype)){
 		$direct = '1';
 	}
 	$_SESSION['paypage_typeid'] = $submitData['typeid'];
 	$_SESSION['paypage_channel'] = $submitData['channel'];
 	$_SESSION['paypage_rate'] = $submitData['rate'];
+	$_SESSION['paypage_paymax'] = $submitData['paymax'];
+	$_SESSION['paypage_paymin'] = $submitData['paymin'];
 }
 
 $codename = !empty($userrow['codename'])?$userrow['codename']:$userrow['username'];
@@ -124,12 +131,15 @@ $_SESSION['paypage_token'] = $csrf_token;
 
 </div>
 
-<script src="//cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
 <script src="//open.mobile.qq.com/sdk/qqapi.js?_bid=152"></script>
 <script src="js/hammer.js"></script>
 <script src="js/common.js"></script>
-<script src="js/pay.js?v=1002"></script>
+<script src="js/pay.js?v=1003"></script>
 <script>
+	document.body.addEventListener('touchmove', function (event) {
+		event.preventDefault();
+	},{ passive: false });
     var tips = new Tips();
 </script>
 </body>

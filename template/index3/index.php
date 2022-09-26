@@ -16,7 +16,7 @@ if(!defined('IN_CRONLITE'))exit();
   <link rel="stylesheet" type="text/css" href="<?php echo STATIC_ROOT?>css/common_1107.css">
 <!-- BANNER -->
   <link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/idangerous.swiper2.7.6.css">
-  <link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/animate.min.css">
+  <link rel="stylesheet" href="<?php echo $cdnpublic?>animate.css/3.7.2/animate.min.css">
   <link rel="stylesheet" href="<?php echo STATIC_ROOT?>css/style.css">
   <style>
   .jyb-banner-box {
@@ -454,21 +454,21 @@ if(!defined('IN_CRONLITE'))exit();
                                   </div>
             </div>
             <div class="pull-left flap" data-ani="fadeInUp" data-delay="0.5s" style="height: 80px;width:auto">
-                <p><?php echo $conf['footer']?></p><p><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved.</p>
+                <p><?php echo $conf['footer']?></p><p><?php echo $conf['sitename']?>&nbsp;&nbsp;&copy;&nbsp;<?php echo date("Y")?>&nbsp;All Rights Reserved.</p>
             </div>
         </div>
     </div>
     <a class="back-top" href="javascript:void(0);"><i class="back-top-icon"></i></a>
 </footer>
 
-  <script src="//cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-  <script src="//cdn.staticfile.org/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+  <script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
+  <script src="<?php echo $cdnpublic?>jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
   <script src="<?php echo STATIC_ROOT?>js/my_js_1107.js"></script>
 
   <!-- BANNER --> 
   <script src="<?php echo STATIC_ROOT?>js/idangerous.swiper2.7.6.min.js"></script>
   <script src="<?php echo STATIC_ROOT?>js/swiper.animate1.0.2.min.js"></script>
-  <script src="<?php echo STATIC_ROOT?>js/three.min.js"></script>
+  <script src="<?php echo $cdnpublic?>three.js/56/three.min.js"></script>
   <!-- BANNER -->
 <script type="text/javascript">
 

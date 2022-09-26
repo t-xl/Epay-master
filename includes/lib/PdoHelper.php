@@ -7,6 +7,7 @@ class PdoHelper
 	private $db;
 	private $fetchStyle = \PDO::FETCH_ASSOC;
 	private $prefix;
+	private $errorInfo;
 
 	/**
 	 * PdoHelper constructor.
@@ -18,11 +19,12 @@ class PdoHelper
 		$this->prefix = $dbconfig['dbqz'].'_';
 		try {
 			$this->db = new \PDO("mysql:host={$dbconfig['host']};dbname={$dbconfig['dbname']};port={$dbconfig['port']}",$dbconfig['user'],$dbconfig['pwd']);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			exit('链接数据库失败:' . $e->getMessage());
 		}
+		$this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
 		$this->db->exec("set sql_mode = ''");
-		$this->db->exec("set names utf8");
+		$this->db->exec("set names utf8mb4");
 	}
 
 	/**
@@ -45,6 +47,213 @@ class PdoHelper
 		return str_replace($this->sqlPrefix,$this->prefix,$_sql);
 	}
 
+	private function _where($conditions){
+		$result = array( "_where" => " ","_bindParams" => array());
+		if(is_array($conditions) && !empty($conditions)){
+			$fieldss = array(); $sql = null; $join = array();
+			if(isset($conditions[0]) && $sql = $conditions[0]) unset($conditions[0]);
+			foreach( $conditions as $key => $condition ){
+				if(substr($key, 0, 1) != ":"){
+					unset($conditions[$key]);
+					$conditions[":".$key] = $condition;
+				}
+				$join[] = "`{$key}` = :{$key}";
+			}
+			if(!$sql) $sql = join(" AND ",$join);
+
+			$result["_where"] = " WHERE ". $sql;
+			$result["_bindParams"] = $conditions;
+		}elseif(!empty($conditions)){
+			$result["_where"] = " WHERE ". $conditions;
+		}
+		return $result;
+	}
+
+	private function _select($table, $fields = '*', $where = array(), $sort = null, $limit = null){
+		$sort = !empty($sort) ? ' ORDER BY '.$sort : '';
+		$fields = !empty($fields) ? $fields : '*';
+		if(is_array($fields)){
+			$fields = implode(',',$fields);
+		}
+		$conditions = $this->_where($where);
+
+		$sql = ' FROM pre_'.$table.$conditions["_where"];
+		if(is_array($limit)){
+			$limit = ' LIMIT '.$limit[0].','.$limit[1];			
+		}elseif(!empty($limit)){
+			$limit = ' LIMIT '.$limit;
+		}else{
+			$limit = '';
+		}
+		return array('sql'=>'SELECT '. $fields . $sql . $sort . $limit, 'bind'=>$conditions["_bindParams"]);
+	}
+
+	/**
+	 * 查询一条数据
+	 * @param string $table
+	 * @param string $fields
+	 * @param array $where
+	 * @param string $sort
+	 * @param int $limit
+	 *
+	 * @return array
+	 */
+	public function find($table, $fields = '*', $where = array(), $sort = null, $limit = null){
+		$sql_arr = $this->_select($table, $fields, $where, $sort, $limit);
+		return $this->getRow($sql_arr['sql'], $sql_arr['bind']);
+	}
+
+	/**
+	 * 查询全部数据
+	 * @param string $table
+	 * @param string $fields
+	 * @param array $where
+	 * @param string $sort
+	 * @param int $limit
+	 *
+	 * @return array
+	 */
+	public function findAll($table, $fields = '*', $where = array(), $sort = null, $limit = null){
+		$sql_arr = $this->_select($table, $fields, $where, $sort, $limit);
+		return $this->getAll($sql_arr['sql'], $sql_arr['bind']);
+	}
+
+	/**
+	 * 查询字段数据
+	 * @param string $table
+	 * @param string $fields
+	 * @param array $where
+	 * @param string $sort
+	 *
+	 * @return mixed
+	 */
+	public function findColumn($table, $fields, $where = array(), $sort = null){
+		$sql_arr = $this->_select($table, $fields, $where, $sort, 1);
+		return $this->getColumn($sql_arr['sql'], $sql_arr['bind']);
+	}
+
+	/**
+	 * 插入数据
+	 * @param string $table
+	 * @param array $data
+	 *
+	 * @return int
+	 */
+	public function insert($table, $data){
+		$values = array();
+		foreach ($data as $k=>$v){
+			$keys[] = "`{$k}`";
+			if ($v == 'NOW()' || $v == 'CURDATE()' || $v == 'CURTIME()') {
+				$marks[] = $v;
+			}elseif ($v == '') {
+				$marks[] = 'NULL';
+			}else{
+				$values[":".$k] = $v;
+				$marks[] = ":".$k;
+			}
+		}
+		$rowCount = $this->exec("INSERT INTO pre_".$table." (".implode(', ', $keys).") VALUES (".implode(', ', $marks).")", $values);
+		if($rowCount){
+			return $this->lastInsertId();
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	 * 更新数据
+	 * @param string $table
+	 * @param array $data
+	 * @param array $where
+	 *
+	 * @return int
+	 */
+	public function update($table, $data, $where){
+		if(is_array($data) && !empty($data)){
+			$values = array();
+			foreach ($data as $k=>$v){
+				if($v == 'NOW()' || $v == 'CURDATE()' || $v == 'CURTIME()'){
+					$setstr[] = "`{$k}` = ".$v;
+				}elseif($v == ''){
+					$setstr[] = "`{$k}` = NULL";
+				}else{
+					$values[":M_UPDATE_".$k] = $v;
+					$setstr[] = "`{$k}` = :M_UPDATE_".$k;
+				}
+			}
+			$update = implode(', ', $setstr);
+		}elseif(!empty($data)){
+			$update = $data;
+		}else{
+			return false;
+		}
+		$conditions = $this->_where($where);
+		$rowCount = $this->exec("UPDATE pre_".$table." SET ".$update.$conditions["_where"], $conditions["_bindParams"] + $values);
+		return $rowCount;
+	}
+
+	/**
+	 * 删除数据
+	 * @param string $table
+	 * @param array $where
+	 *
+	 * @return int
+	 */
+	public function delete($table, $where){
+		$conditions = $this->_where($where);
+		$rowCount = $this->exec("DELETE FROM pre_".$table.$conditions["_where"], $conditions["_bindParams"]);
+		return $rowCount;
+	}
+
+	/**
+	 * 统计行数
+	 * @param string $table
+	 * @param array $where
+	 *
+	 * @return int
+	 */
+	public function count($table, $where){
+		$conditions = $this->_where($where);
+		$count = $this->getColumn("SELECT COUNT(*) FROM pre_".$table.$conditions["_where"], $conditions["_bindParams"]);
+		return $count;
+	}
+
+
+	/**
+	 * 执行语句
+	 * @param string $_sql
+	 * @param array $_array
+	 *
+	 * @return int|bool
+	 */
+	public function exec($_sql, $_array = null)
+	{
+		$_sql = $this->dealPrefix($_sql);
+		if (is_array($_array)) {
+			$stmt = $this->db->prepare($_sql);
+			if($stmt) {
+				$result = $stmt->execute($_array);
+				if($result!==false){
+					return $result;
+				}else{
+					$this->errorInfo = $stmt->errorInfo();
+					return false;
+				}
+			}else{
+				$this->errorInfo = $this->db->errorInfo();
+				return false;
+			}
+		} else {
+			$result = $this->db->exec($_sql);
+			if($result!==false){
+				return $result;
+			}else{
+				$this->errorInfo = $this->db->errorInfo();
+				return false;
+			}
+		}
+	}
+
 	/**
 	 * 获取PDOStatement
 	 * @param string $_sql
@@ -57,11 +266,25 @@ class PdoHelper
 		$_sql = $this->dealPrefix($_sql);
 		if (is_array($_array)) {
 			$stmt = $this->db->prepare($_sql);
-			if($stmt) $stmt->execute($_array);
+			if($stmt) {
+				if($stmt->execute($_array)){
+					return $stmt;
+				}else{
+					$this->errorInfo = $stmt->errorInfo();
+					return false;
+				}
+			}else{
+				$this->errorInfo = $this->db->errorInfo();
+				return false;
+			}
 		} else {
-			$stmt = $this->db->query($_sql);
+			if($stmt = $this->db->query($_sql)){
+				return $stmt;
+			}else{
+				$this->errorInfo = $this->db->errorInfo();
+				return false;
+			}
 		}
-		return $stmt;
 	}
 
 	/**
@@ -74,13 +297,7 @@ class PdoHelper
 	 */
 	public function getRow($_sql, $_array = null)
 	{
-		$_sql = $this->dealPrefix($_sql);
-		if (is_array($_array)) {
-			$stmt = $this->db->prepare($_sql);
-			if($stmt) $stmt->execute($_array);
-		} else {
-			$stmt = $this->db->query($_sql);
-		}
+		$stmt = $this->query($_sql, $_array);
 		if($stmt) {
 			return $stmt->fetch($this->fetchStyle);
 		}else{
@@ -98,13 +315,7 @@ class PdoHelper
 	 */
 	public function getAll($_sql, $_array = null)
 	{
-		$_sql = $this->dealPrefix($_sql);
-		if (is_array($_array)) {
-			$stmt = $this->db->prepare($_sql);
-			if($stmt) $stmt->execute($_array);
-		} else {
-			$stmt = $this->db->query($_sql);
-		}
+		$stmt = $this->query($_sql, $_array);
 		if($stmt) {
 			return $stmt->fetchAll($this->fetchStyle);
 		}else{
@@ -121,10 +332,8 @@ class PdoHelper
 	 */
 	public function getCount($_sql, $_array = null)
 	{
-		$_sql = $this->dealPrefix($_sql);
-		$stmt = $this->db->prepare($_sql);
+		$stmt = $this->query($_sql, $_array);
 		if($stmt) {
-			$stmt->execute($_array);
 			return $stmt->rowCount();
 		}else{
 			return false;
@@ -140,39 +349,11 @@ class PdoHelper
 	 */
 	public function getColumn($_sql, $_array = null)
 	{
-		$_sql = $this->dealPrefix($_sql);
-		if (is_array($_array)) {
-			$stmt = $this->db->prepare($_sql);
-			if($stmt) $stmt->execute($_array);
-		} else {
-			$stmt = $this->db->query($_sql);
-		}
+		$stmt = $this->query($_sql, $_array);
 		if($stmt) {
 			return $stmt->fetchColumn();
 		}else{
 			return false;
-		}
-	}
-
-	/**
-	 * 执行语句
-	 * @param string $_sql
-	 * @param array $_array
-	 *
-	 * @return int|\PDOStatement
-	 */
-	public function exec($_sql, $_array = null)
-	{
-		$_sql = $this->dealPrefix($_sql);
-		if (is_array($_array)) {
-			$stmt = $this->db->prepare($_sql);
-			if($stmt) {
-				return $stmt->execute($_array);
-			}else{
-				return false;
-			}
-		} else {
-			return $this->db->exec($_sql);
 		}
 	}
 
@@ -193,8 +374,30 @@ class PdoHelper
 	 */
 	public function error()
 	{
-		$error = $this->db->errorInfo();
-		return '['.$error[1].']'.$error[2];
+		$error = $this->errorInfo;
+		if($error){
+			return '['.$error[1].']'.$error[2];
+		}else{
+			return null;
+		}
+	}
+
+	//开启事务
+	public function beginTransaction()
+	{
+		return $this->db->beginTransaction();
+	}
+
+	//提交事务
+	public function commit()
+	{
+		return $this->db->commit();
+	}
+
+	//回滚事务
+	public function rollBack()
+	{
+		return $this->db->rollBack();
 	}
 
 	function __get($name)

@@ -18,7 +18,7 @@ if($my=='refresh') {
 $list = \lib\Plugin::getAll();
 ?>
 <div class="panel panel-info">
-   <div class="panel-heading"><h3 class="panel-title">系统共有 <b><?php echo count($list);?></b> 个支付插件&nbsp;<span class="pull-right">【<a href="./pay_plugin.php?my=refresh">刷新插件列表</a>】</span></h3></div>
+   <div class="panel-heading"><h3 class="panel-title">系统共有 <b><?php echo count($list);?></b> 个支付插件&nbsp;<span class="pull-right"><a href="./pay_plugin.php?my=refresh" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i> 刷新插件列表</a></span></h3></div>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead><tr><th>插件名称</th><th>插件描述</th><th>插件作者</th><th>包含的支付方式</th></tr></thead>
@@ -26,8 +26,8 @@ $list = \lib\Plugin::getAll();
 <?php
 foreach($list as $res)
 {
-echo '<tr><td><b>'.$res['name'].'</b></td><td>'.$res['showname'].'</td><td><a href="'.$res['link'].'" target="_blank" rel="noreferrer">'.$res['author'].'
-</a></td><td>'.$res['types'].'</td></tr>';
+echo '<tr><td><b>'.$res['name'].'</b></td><td>'.$res['showname'].'</td><td>'.($res['link']?'<a href="'.$res['link'].'" target="_blank" rel="noreferrer">'.$res['author'].'
+</a>':$res['author']).'</td><td>'.$res['types'].'</td></tr>';
 }
 ?>
           </tbody>

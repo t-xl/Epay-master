@@ -5,7 +5,7 @@
  */
 namespace lib\sms;
 
-class SmsSenderUtil
+class TencentSmsUtil
 {
     /**
      * 生成随机数

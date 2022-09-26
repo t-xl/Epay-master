@@ -46,8 +46,8 @@ class TencentSms
         $wholeUrl = $this->url . "?sdkappid=" . $this->appid . "&random=" . $random;
 
         // 按照协议组织 post 包体
-        $data = new stdClass();
-        $tel = new stdClass();
+        $data = new \stdClass();
+        $tel = new \stdClass();
         $tel->nationcode = "".$nationCode;
         $tel->mobile = "".$phoneNumber;
 
@@ -84,8 +84,8 @@ class TencentSms
         $wholeUrl = $this->url . "?sdkappid=" . $this->appid . "&random=" . $random;
 
         // 按照协议组织 post 包体
-        $data = new stdClass();
-        $tel = new stdClass();
+        $data = new \stdClass();
+        $tel = new \stdClass();
         $tel->nationcode = "".$nationCode;
         $tel->mobile = "".$phoneNumber;
 

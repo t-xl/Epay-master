@@ -43,6 +43,18 @@ class WxPayNotify extends WxPayNotifyReply
 	public function NotifyProcess($data, &$msg)
 	{
 		//TODO 用户基础该类之后需要重写该方法，成功的时候返回true，失败返回false
+		return false;
+	}
+
+	/**
+	*
+	* 业务可以继承该方法，打印XML方便定位.
+	* @param string $xmlData 返回的xml参数
+	*
+	**/
+	public function LogAfterProcess($xmlData)
+	{
+		return;
 	}
 	
 	/**
@@ -75,10 +87,13 @@ class WxPayNotify extends WxPayNotifyReply
 	{
 		//如果需要签名
 		if($needSign == true && 
-			$this->GetReturn_code($return_code) == "SUCCESS")
+			$this->GetReturn_code() == "SUCCESS")
 		{
 			$this->SetSign();
 		}
-		WxpayApi::replyNotify($this->ToXml());
+
+		$xml = $this->ToXml();
+		$this->LogAfterProcess($xml);
+		WxpayApi::replyNotify($xml);
 	}
 }

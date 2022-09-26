@@ -89,6 +89,33 @@ if(strlen($userrow['phone'])==11){
 				</div>
 			</div>
 		</div>
+		<div class="modal inmodal fade" id="myModal3" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+						</button>
+						<h4 class="modal-title">修改手机号码</h4>
+					</div>
+					<div class="modal-body">
+<div class="list-group-item">
+<input type="text" name="phone_s" placeholder="输入新的手机号码" class="form-control" required>
+</div>
+<div class="list-group-item">
+<div class="input-group">
+<input type="text" name="code_s" placeholder="输入短信验证码" class="form-control" required>
+<a class="input-group-addon" id="sendcode3">获取验证码</a>
+</div>
+</div>
+<button type="button" id="editBindPhone" class="btn btn-primary btn-block">确定</button>
+<div id="embed-captcha"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					</div>
+				</div>
+			</div>
+		</div>
 <div class="bg-light lter b-b wrapper-md hidden-print">
   <h1 class="m-n font-thin h3">个人资料</h1>
 </div>
@@ -182,7 +209,16 @@ if(strlen($userrow['phone'])==11){
 						</div>
 					</div>
 				</div>
-				<?php }?>
+				<?php if(!empty($conf['sms_appkey'])){?><div class="form-group">
+					<label class="col-sm-2 control-label">手机号码</label>
+					<div class="col-sm-9">
+						<div class="input-group">
+						<input class="form-control" type="text" name="phone" value="<?php echo $userrow['phone']?>" disabled>
+						<a class="input-group-addon" id="bindphone">修改绑定</a>
+						</div>
+					</div>
+				</div>
+				<?php }}?>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">ＱＱ</label>
 					<div class="col-sm-9">
@@ -207,6 +243,28 @@ if(strlen($userrow['phone'])==11){
 				 </div>
 				</div>
 
+<?php
+if($conf['user_settings_edit']){
+$group_settings=$DB->getColumn("SELECT settings FROM pre_group WHERE gid='{$userrow['gid']}' LIMIT 1");
+if(!$group_settings)$group_settings=$DB->getColumn("SELECT settings FROM pre_group WHERE gid=0 LIMIT 1");
+$channelinfo = json_decode($userrow['channelinfo'], true);
+if($group_settings){
+?>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<div class="form-group"><div class="col-sm-offset-2 col-sm-4"><h4>自定义接口信息设置：</h4></div></div>
+
+<?php foreach(explode(',',$group_settings) as $row){
+	$arr = explode(':', $row);
+	echo '<div class="form-group">
+<label class="col-sm-2 control-label">'.$arr[1].'</label>
+<div class="col-sm-9"><input type="text" class="form-control" name="setting['.$arr[0].']" value="'.$channelinfo[$arr[0]].'" required></div>
+</div>';
+}?>
+				<div class="form-group">
+				  <div class="col-sm-offset-2 col-sm-4"><input type="button" id="editChannelInfo" value="确定修改" class="btn btn-primary form-control"/><br/>
+				 </div>
+				</div>
+<?php }}?>
 				<div class="line line-dashed b-b line-lg pull-in"></div>
 				<div class="form-group"><div class="col-sm-offset-2 col-sm-4"><h4>支付手续费扣除模式选择：</h4></div></div>
 				<div class="form-group has-success">
@@ -239,19 +297,19 @@ if(strlen($userrow['phone'])==11){
 					</div>
 				</div>
 				<?php }?>
-				<?php if($conf['login_wx']>0){?>
+				<?php if($conf['login_wx']!=0){?>
 				<div class="form-group">
 					<div class="col-xs-6"><span class="pull-right"><i class="fa fa-wechat fa-2x fa-fw" style="color: green"></i>&nbsp;&nbsp;&nbsp;微信快捷登录&nbsp;&nbsp;&nbsp;</span></div>
 					<div class="col-xs-6">
-					<?php if($userrow['wxid']){?>
-						<a class="btn btn-sm btn-success" disabled title="<?php echo $userrow['wxid']?>">已绑定</a>&nbsp;&nbsp;&nbsp;<a class="btn btn-sm btn-danger" href="./wxlogin.php?unbind=1" onclick="return confirm('解绑后将无法通过微信一键登录，是否确定解绑？');">解绑</a>
+					<?php if($userrow['wx_uid']){?>
+						<a class="btn btn-sm btn-success" disabled title="<?php echo $userrow['wx_uid']?>">已绑定</a>&nbsp;&nbsp;&nbsp;<a class="btn btn-sm btn-danger" href="./wxlogin.php?unbind=1" onclick="return confirm('解绑后将无法通过微信一键登录，是否确定解绑？');">解绑</a>
 					<?php }else{?>
 						<a class="btn btn-sm btn-success" href="./wxlogin.php?bind=1">立即绑定</a>
 					<?php }?>
 					</div>
 				</div>
 				<?php }?>
-				<?php if($conf['login_alipay']>0){?>
+				<?php if($conf['login_alipay']!=0){?>
 				<div class="form-group">
 					<div class="col-xs-6"><span class="pull-right"><i class="fa fa-2x"><img src="/assets/icon/alipay.ico" style="border-radius:50px;"></i>&nbsp;&nbsp;支付宝快捷登录</span></div>
 					<div class="col-xs-6">
@@ -271,8 +329,8 @@ if(strlen($userrow['phone'])==11){
     </div>
   </div>
 <?php include 'foot.php';?>
-<script src="../assets/layer/layer.js"></script>
-<script src="../assets/js/jquery-qrcode.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <script src="//static.geetest.com/static/tools/gt.js"></script>
 <script>
 function invokeSettime(obj){
@@ -316,6 +374,7 @@ var handlerEmbed = function (captchaObj) {
 				if(data.code == 0){
 					new invokeSettime("#sendcode");
 					new invokeSettime("#sendcode2");
+					new invokeSettime("#sendcode3");
 					layer.msg('发送成功，请注意查收！');
 				}else{
 					layer.alert(data.msg);
@@ -340,6 +399,13 @@ var handlerEmbed = function (captchaObj) {
 			var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
 			if(!reg.test(target)){layer.alert('邮箱格式不正确！');return false;}
 		}
+		captchaObj.verify();
+	});
+	$('#sendcode3').click(function () {
+		if ($(this).attr("data-lock") === "true") return;
+		target=$("input[name='phone_s']").val();
+		if(target==''){layer.alert('手机号码不能为空！');return false;}
+		if(target.length!=11){layer.alert('手机号码不正确！');return false;}
 		captchaObj.verify();
 	})
 	// 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
@@ -422,6 +488,27 @@ $(document).ready(function(){
 			}
 		});
 	});
+	$("#editChannelInfo").click(function(){
+		var ii = layer.load(2, {shade:[0.1,'#fff']});
+		var setting = {};
+		$("input[name^='setting']").each(function(i, el) {
+			setting[el.name] =$(this).val();
+		});
+		$.ajax({
+			type : "POST",
+			url : "ajax2.php?act=edit_channel_info",
+			data : setting,
+			dataType : 'json',
+			success : function(data) {
+				layer.close(ii);
+				if(data.code == 1){
+					layer.alert('修改成功！', {icon:1});
+				}else{
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
 	$("#editMode").click(function(){
 		var mode=$("select[name='mode']").val();
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
@@ -481,6 +568,26 @@ $(document).ready(function(){
 			}
 		});
 	});
+	$("#editBindPhone").click(function(){
+		var phone=$("input[name='phone_s']").val();
+		var code=$("input[name='code_s']").val();
+		if(code==''){layer.alert('请输入验证码！');return false;}
+		var ii = layer.load(2, {shade:[0.1,'#fff']});
+		$.ajax({
+			type : "POST",
+			url : "ajax2.php?act=edit_bind",
+			data : {phone:phone,code:code},
+			dataType : 'json',
+			success : function(data) {
+				layer.close(ii);
+				if(data.code == 1){
+					layer.alert('修改绑定成功！', {icon:1}, function(){window.location.reload()});
+				}else{
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
 	$("#verifycode").click(function(){
 		var code=$("input[name='code']").val();
 		var situation=$("#situation").val();
@@ -510,6 +617,10 @@ $(document).ready(function(){
 				}
 			}
 		});
+	});
+	$("#bindphone").click(function(){
+		$("#situation").val("bindphone");
+		$('#myModal3').modal('show');
 	});
 	$('#getopenid').click(function () {
 		if ($(this).attr("data-lock") === "true") return;
@@ -555,24 +666,19 @@ $(document).ready(function(){
 		});
 	});
 	$.ajax({
-		// 获取id，challenge，success（是否启用failback）
-		url: "ajax.php?act=captcha&t=" + (new Date()).getTime(), // 加随机数防止缓存
+		url: "ajax.php?act=captcha&t=" + (new Date()).getTime(),
 		type: "get",
 		asysn: true,
 		dataType: "json",
 		success: function (data) {
 			console.log(data);
-			// 使用initGeetest接口
-			// 参数1：配置参数
-			// 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
 			initGeetest({
 				width: '100%',
 				gt: data.gt,
 				challenge: data.challenge,
 				new_captcha: data.new_captcha,
-				product: "bind", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
-				offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
-				// 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+				product: "bind",
+				offline: !data.success
 			}, handlerEmbed);
 		}
 	});

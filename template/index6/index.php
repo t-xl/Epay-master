@@ -14,16 +14,16 @@ if(!defined('IN_CRONLITE'))exit();
   	<meta name="keywords" content="<?php echo $conf['keywords']?>">
 	<meta name="description" content="<?php echo $conf['description']?>">	
 	<!-- ================== BEGIN BASE CSS STYLE ================== -->
-	<link href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
-	<link href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-	<link href="//cdn.staticfile.org/animate.css/3.7.2/animate.min.css" rel="stylesheet" />
+	<link href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+	<link href="<?php echo $cdnpublic?>animate.css/3.7.2/animate.min.css" rel="stylesheet" />
 	<link href="<?php echo STATIC_ROOT?>css/style.min.css" rel="stylesheet" />
 	<link href="<?php echo STATIC_ROOT?>css/style-responsive.min.css" rel="stylesheet" />
 	<link href="<?php echo STATIC_ROOT?>css/theme/blue.css" id="theme" rel="stylesheet" />
 	<!-- ================== END BASE CSS STYLE ================== -->
 	
 	<!-- ================== BEGIN BASE JS ================== -->
-	<script src="//cdn.staticfile.org/pace/1.0.2/pace.min.js"></script>
+	<script src="<?php echo $cdnpublic?>pace/1.0.2/pace.min.js"></script>
 	<!-- ================== END BASE JS ================== -->
 </head>
 <body data-spy="scroll" data-target="#header-navbar" data-offset="51">
@@ -76,12 +76,12 @@ if(!defined('IN_CRONLITE'))exit();
             <!-- begin container -->
             <div class="container home-content">
                 <h1>欢迎来到 <a href="JavaScript:;"><?php echo $conf['sitename']?></a></h1>
-                <h3>免签约支付平台 结算费率低至<?php echo $conf['settle_rate']*100; ?>%！</h3>
+                <h3>免签约支付平台 结算费率低至<?php echo $conf['settle_rate']; ?>%！</h3>
                 <h4>
                     支持多种支付方式：支付宝、QQ钱包、微信、财付通支付，可根据开发文档快速接入自己网站！<br />
                     <a href="JavaScript:;">稳定、安全、值得信赖</a>
                 </h4>
-                <a href="../../user/reg.php" class="btn btn-theme">申请接入</a> <a href="../../user" class="btn btn-outline">商户登录</a><br />
+                <a href="./user/reg.php" class="btn btn-theme">申请接入</a> <a href="./user/" class="btn btn-outline">商户登录</a><br />
             </div>
             <!-- end container -->
         </div>
@@ -238,7 +238,7 @@ if(!defined('IN_CRONLITE'))exit();
                                 <div class="title text-theme">客服</div>
                                 <p>业务售后综合客服 </p>
                                 <div class="social">
-                                    <a href="https://wpa.qq.com/msgrd?v=3&uin=<?php echo $conf['kfqq']?>&site=pay&menu=yes" title="点击联系客服QQ"><i class="fa fa-qq fa-lg fa-fw"></i></a>
+                                    <a href="https://wpa.qq.com/msgrd?v=3&uin=<?php echo $conf['kfqq']?>&site=pay&menu=yes" title="点击联系客服QQ" target="_blank"><i class="fa fa-qq fa-lg fa-fw"></i></a>
                                     <a href="JavaScript:;"><i class="fa fa-weibo fa-lg fa-fw"></i></a>
                                     <a href="JavaScript:;"><i class="fa fa-home fa-lg fa-fw"></i></a>
                                 </div>
@@ -262,7 +262,7 @@ if(!defined('IN_CRONLITE'))exit();
                     <?php echo $conf['sitename']?>
                 </div>
                 <p>
-                    Copyright&nbsp;&nbsp;&copy;&nbsp;2020&nbsp;All Rights Reserved.<br/><?php echo $conf['footer']?>
+                    Copyright&nbsp;&nbsp;&copy;&nbsp;<?php echo date("Y")?>&nbsp;All Rights Reserved.<br/><?php echo $conf['footer']?>
                 </p>
             </div>
         </div>
@@ -286,15 +286,15 @@ if(!defined('IN_CRONLITE'))exit();
     <!-- end #page-container -->
 	
 	<!-- ================== BEGIN BASE JS ================== -->
-	<script src="//cdn.staticfile.org/jquery/1.12.4/jquery.min.js"></script>
-	<script src="//cdn.staticfile.org/jquery-migrate/1.4.1/jquery-migrate.min.js"></script>
-	<script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="<?php echo $cdnpublic?>jquery/1.12.4/jquery.min.js"></script>
+	<script src="<?php echo $cdnpublic?>jquery-migrate/1.4.1/jquery-migrate.min.js"></script>
+	<script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 	<!--[if lt IE 9]>
-		<script src="//cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
-		<script src="//cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+		<script src="<?php echo $cdnpublic?>html5shiv/3.7.3/html5shiv.min.js"></script>
+		<script src="<?php echo $cdnpublic?>respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
-	<script src="//cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-	<script src="//cdn.staticfile.org/scrollmonitor/1.2.0/scrollMonitor.js"></script>
+	<script src="<?php echo $cdnpublic?>jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	<script src="<?php echo $cdnpublic?>scrollmonitor/1.2.0/scrollMonitor.js"></script>
 	<script src="<?php echo STATIC_ROOT?>js/apps.min.js"></script>
 	<!-- ================== END BASE JS ================== -->
 	

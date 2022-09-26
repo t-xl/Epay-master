@@ -87,8 +87,8 @@ include './head.php';
 	</div>
   </div>
 <?php include 'foot.php';?>
-<script src="../assets/layer/layer.js"></script>
-<script src="../assets/js/jquery-qrcode.min.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <script>
 $(document).ready(function(){
 	$("select[name='stype']").change(function(){
@@ -109,7 +109,7 @@ $(document).ready(function(){
 		var qq=$("input[name='qq']").val();
 		var url=$("input[name='url']").val();
 		if(account=='' || username=='' || email=='' || qq=='' || url==''){layer.alert('请确保各项不能为空！');return false;}
-		if(email.length>0){
+		if($("input[name='email']").length>0){
 			var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
 			if(!reg.test(email)){layer.alert('邮箱格式不正确！');return false;}
 		}

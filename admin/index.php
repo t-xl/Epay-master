@@ -36,7 +36,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
 	</div>
 </div>
 	  <div class="panel panel-success">
-	    <div class="panel-heading"><h3 class="panel-title">支付方式收入统计（1小时更新一次）</h3></div>
+	    <div class="panel-heading"><h3 class="panel-title">支付方式收入统计（1小时更新一次）<span class="pull-right"><a href="javascript:getData(true)" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i></a></span></h3></div>
           <table class="table table-bordered table-striped">
 		    <thead><tr id="paytype_head"><th>日期</th></thead>
             <tbody id="paytype_list">
@@ -44,21 +44,27 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
           </table>
       </div>
 	  <div class="panel panel-warning">
-	    <div class="panel-heading"><h3 class="panel-title">支付通道收入统计（1小时更新一次）</h3></div>
+	    <div class="panel-heading"><h3 class="panel-title">支付通道收入统计（1小时更新一次）<span class="pull-right"><a href="javascript:getData(true)" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i></a></span></h3></div>
+		<div class="table-responsive">
           <table class="table table-bordered table-striped">
 		    <thead><tr id="channel_head"><th>日期</th></thead>
             <tbody id="channel_list">
 			</tbody>
           </table>
+		</div>
       </div>
     </div>
   </div>
 <script>
 $(document).ready(function(){
+	getData();
+});
+function getData(getnew){
+	getnew = getnew || false;
 	$('#title').html('正在加载数据中...');
 	$.ajax({
 		type : "GET",
-		url : "ajax.php?act=getcount",
+		url : "ajax.php?act=getcount"+(getnew?'&getnew=1':''),
 		dataType : 'json',
 		async: true,
 		success : function(data) {
@@ -68,6 +74,8 @@ $(document).ready(function(){
 			$('#usermoney').html(data.usermoney);
 			$('#settlemoney').html(data.settlemoney);
 
+			$("#paytype_head").html('<th>日期</th>');
+			$("#paytype_list").empty();
 			var paytype=new Array();
 			$.each(data.paytype, function(k, v){
 				paytype.push(k);
@@ -89,6 +97,8 @@ $(document).ready(function(){
 				$("#paytype_list").append('<tr><td>'+k+'</td>'+order+'<td>'+v.all+'</td></tr>');
 			});
 
+			$("#channel_head").html('<th>日期</th>');
+			$("#channel_list").empty();
 			var channel=new Array();
 			$.each(data.channel, function(k, v){
 				channel.push(k);
@@ -111,5 +121,5 @@ $(document).ready(function(){
 			});
 		}
 	});
-})
+}
 </script>

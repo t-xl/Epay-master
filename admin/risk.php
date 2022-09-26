@@ -9,7 +9,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
 ?>
   <div class="container" style="padding-top:70px;">
     <div class="col-md-12 center-block" style="float: none;">
-<form onsubmit="return searchRecord()" method="GET" class="form-inline">
+<form onsubmit="return searchSubmit()" method="GET" class="form-inline" id="searchToolbar">
   <div class="form-group">
     <label>搜索</label>
 	<select name="column" class="form-control"><option value="uid">商户号</option><option value="url">风控网址</option><option value="content">风控内容</option></select>
@@ -18,52 +18,64 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
     <input type="text" class="form-control" name="value" placeholder="搜索内容">
   </div>
   <button type="submit" class="btn btn-primary">搜索</button>
-  <a href="javascript:listTable('start')" class="btn btn-default" title="刷新风控记录"><i class="fa fa-refresh"></i></a>
+  <a href="javascript:searchClear()" class="btn btn-default" title="刷新风控记录"><i class="fa fa-refresh"></i></a>
 </form>
 
-<div id="listTable"></div>
+      <table id="listTable">
+	  </table>
     </div>
   </div>
-<script src="//cdn.staticfile.org/layer/2.3/layer.js"></script>
+<script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-table/1.20.2/bootstrap-table.min.js"></script>
+<script src="<?php echo $cdnpublic?>bootstrap-table/1.20.2/extensions/page-jump-to/bootstrap-table-page-jump-to.min.js"></script>
+<script src="../assets/js/custom.js"></script>
 <script>
-function listTable(query){
-	var url = window.document.location.href.toString();
-	var queryString = url.split("?")[1];
-	query = query || queryString;
-	if(query == 'start' || query == undefined){
-		query = '';
-		history.replaceState({}, null, './risk.php');
-	}else if(query != undefined){
-		history.replaceState({}, null, './risk.php?'+query);
-	}
-	layer.closeAll();
-	var ii = layer.load(2, {shade:[0.1,'#fff']});
-	$.ajax({
-		type : 'GET',
-		url : 'risk-table.php?'+query,
-		dataType : 'html',
-		cache : false,
-		success : function(data) {
-			layer.close(ii);
-			$("#listTable").html(data)
-		},
-		error:function(data){
-			layer.msg('服务器错误');
-			return false;
-		}
-	});
-}
-function searchRecord(){
-	var column=$("select[name='column']").val();
-	var value=$("input[name='value']").val();
-	if(value==''){
-		listTable();
-	}else{
-		listTable('column='+column+'&value='+value);
-	}
-	return false;
-}
 $(document).ready(function(){
-	listTable();
+	updateToolbar();
+	const defaultPageSize = 30;
+	const pageNumber = typeof window.$_GET['pageNumber'] != 'undefined' ? parseInt(window.$_GET['pageNumber']) : 1;
+	const pageSize = typeof window.$_GET['pageSize'] != 'undefined' ? parseInt(window.$_GET['pageSize']) : defaultPageSize;
+
+	$("#listTable").bootstrapTable({
+		url: 'ajax_order.php?act=riskList',
+		pageNumber: pageNumber,
+		pageSize: pageSize,
+		classes: 'table table-striped table-hover table-bordered',
+		columns: [
+			{
+				field: 'id',
+				title: 'ID',
+				formatter: function(value, row, index) {
+					return '<b>'+value+'</b>';
+				}
+			},
+			{
+				field: 'uid',
+				title: '商户号',
+				formatter: function(value, row, index) {
+					return '<b><a href="./ulist.php?column=uid&value='+value+'" target="_blank">'+value+'</a></b>';
+				}
+			},
+			{
+				field: 'type',
+				title: '风控类型',
+				formatter: function(value, row, index) {
+					return '关键词屏蔽';
+				}
+			},
+			{
+				field: 'url',
+				title: '风控网址'
+			},
+			{
+				field: 'content',
+				title: '风控内容'
+			},
+			{
+				field: 'date',
+				title: '时间'
+			}
+		],
+	})
 })
 </script>

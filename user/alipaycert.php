@@ -1,6 +1,12 @@
 <?php
 include("../includes/common.php");
-$certify_id = isset($_GET['id'])?$_GET['id']:exit('param is error');
+$uid = isset($_GET['uid'])?intval($_GET['uid']):exit('param is error');
+$certify_id = isset($_GET['certtoken'])?$_GET['certtoken']:exit('param is error');
+
+$userrow=$DB->getRow("SELECT * FROM pre_user WHERE uid='{$uid}' limit 1");
+if(!$userrow)sysmsg('uid不存在');
+if($certify_id!=$userrow['certtoken'])sysmsg('certtoken不正确');
+
 $channel = \lib\Channel::get($conf['cert_channel']);
 if(!$channel)sysmsg('当前实名认证通道信息不存在');
 define("IN_PLUGIN", true);

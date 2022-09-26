@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if(!defined('IN_CRONLITE'))exit();
 require INDEX_ROOT.'head.php';
 ?>
